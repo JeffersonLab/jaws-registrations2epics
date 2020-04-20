@@ -16,13 +16,13 @@ import java.util.concurrent.CountDownLatch;
 
 public final class TestRule {
 
-    public static final String INPUT_TOPIC = "streams-plaintext-input";
-    public static final String OUTPUT_TOPIC = "streams-wordcount-output";
+    public static final String INPUT_TOPIC = "alarmtest-pv1";
+    public static final String OUTPUT_TOPIC = "active-alarms";
 
     static Properties getStreamsConfig() {
         final Properties props = new Properties();
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "streams-wordcount");
-        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "streams-test-rule");
+        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "kafkatest.acc.jlab.org:9092");
         props.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
@@ -34,28 +34,28 @@ public final class TestRule {
         return props;
     }
 
-    static void createWordCountStream(final StreamsBuilder builder) {
+    static void createTestRuleStream(final StreamsBuilder builder) {
         final KStream<String, String> source = builder.stream(INPUT_TOPIC);
 
-        final KTable<String, Long> counts = source
-                .flatMapValues(value -> Arrays.asList(value.toLowerCase(Locale.getDefault()).split(" ")))
-                .groupBy((key, value) -> value)
-                .count();
+        final KStream<String, String> alarms = source.filter((k, v) -> {
+            System.out.printf("Handling msg; key = %s, value = %s%n", k, v);
 
-        // need to override value serde to Long type
-        counts.toStream().to(OUTPUT_TOPIC, Produced.with(Serdes.String(), Serdes.Long()));
+            return v != null && v.contains("MAJOR_ALARM");
+        });
+
+        alarms.to(OUTPUT_TOPIC, Produced.with(Serdes.String(), Serdes.String()));
     }
 
     public static void main(final String[] args) {
         final Properties props = getStreamsConfig();
 
         final StreamsBuilder builder = new StreamsBuilder();
-        createWordCountStream(builder);
+        createTestRuleStream(builder);
         final KafkaStreams streams = new KafkaStreams(builder.build(), props);
         final CountDownLatch latch = new CountDownLatch(1);
 
         // attach shutdown handler to catch control-c
-        Runtime.getRuntime().addShutdownHook(new Thread("streams-wordcount-shutdown-hook") {
+        Runtime.getRuntime().addShutdownHook(new Thread("streams-test-rule-shutdown-hook") {
             @Override
             public void run() {
                 streams.close();

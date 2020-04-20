@@ -2,3 +2,5 @@
 /.gradle/
 /consumer/build/
 /producer/build/
+/active-alarms/out/
+/active-alarms/build/
