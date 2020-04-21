@@ -1,5 +1,6 @@
 rootProject.name = 'kafka-alarms'
 include 'producer'
 include 'consumer'
-include 'active-alarms'
+include 'testrule'
+include 'schema'
 

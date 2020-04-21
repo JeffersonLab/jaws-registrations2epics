@@ -1,0 +1,12 @@
+{
+  "name": "AlarmMetadata",
+  "namespace": "org.jlab",
+  "type": "record",
+  "fields" : [
+    {"name": "name", "type": "string"},
+    {"name": "location", "type": "string"},
+    {"name": "category", "type": "string"},
+    {"name": "docUrl", "type": "string"},
+    {"name": "opsEdmScreenPath", "type": "string"}
+  ]
+}

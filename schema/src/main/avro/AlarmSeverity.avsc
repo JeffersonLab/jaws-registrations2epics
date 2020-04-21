@@ -1,0 +1,6 @@
+{
+  "name": "AlarmSeverity",
+  "namespace": "org.jlab",
+  "type": "enum",
+  "symbols" : ["MAJOR", "MINOR", "NONE"]
+}

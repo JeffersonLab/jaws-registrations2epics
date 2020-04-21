@@ -1,0 +1,9 @@
+{
+  "name": "ActiveAlarm",
+  "namespace": "org.jlab",
+  "type": "record",
+  "fields" : [
+    {"name": "name", "type": "string"},
+    {"name": "severity", "type": "AlarmSeverity"}
+  ]
+}

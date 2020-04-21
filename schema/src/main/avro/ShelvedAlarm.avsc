@@ -1,0 +1,12 @@
+{
+  "name": "ShelvedAlarm",
+  "namespace": "org.jlab",
+  "type": "record",
+  "fields" : [
+    {"name": "name", "type": "string"},
+    {"name": "type", "type": "ShelvedAlarmType"},
+    {"name": "expiration", "type": "string"},
+    {"name": "user", "type": "string"},
+    {"name": "timestamp", "type": "string"}
+  ]
+}
