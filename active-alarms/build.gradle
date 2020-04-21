@@ -19,7 +19,7 @@ dependencies {
 }
 
 jar {
-    archiveName "active-alarms.jar"
+    archiveName "testrule.jar"
 }
 
 application {

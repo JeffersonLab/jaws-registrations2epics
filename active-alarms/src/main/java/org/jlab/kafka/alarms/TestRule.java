@@ -9,14 +9,13 @@ import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Produced;
 
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 public final class TestRule {
 
-    public static final String INPUT_TOPIC = "alarmtest-pv1";
+    public static final String INPUT_TOPIC1 = "alarmtest-pv1";
+    public static final String INPUT_TOPIC2 = "alarmtest-pv2";
     public static final String OUTPUT_TOPIC = "active-alarms";
 
     static Properties getStreamsConfig() {
@@ -35,7 +34,13 @@ public final class TestRule {
     }
 
     static void createTestRuleStream(final StreamsBuilder builder) {
-        final KStream<String, String> source = builder.stream(INPUT_TOPIC);
+        KStream<String, String> source1 = builder.stream(INPUT_TOPIC1);
+        source1 = source1.mapValues(value -> "alarmtest-pv1 " + value);
+
+        KStream<String, String> source2 = builder.stream(INPUT_TOPIC2);
+        source2 = source2.mapValues(value -> "alarmtest-pv2 " + value);
+
+        final KStream<String, String> source = source1.merge(source2);
 
         final KStream<String, String> alarms = source.filter((k, v) -> {
             System.out.printf("Handling msg; key = %s, value = %s%n", k, v);
