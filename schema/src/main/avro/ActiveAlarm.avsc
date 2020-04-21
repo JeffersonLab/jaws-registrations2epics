@@ -3,7 +3,7 @@
   "namespace": "org.jlab",
   "type": "record",
   "fields" : [
-    {"name": "name", "type": "string"},
-    {"name": "severity", "type": "AlarmSeverity"}
+    {"name": "name", "type": "string", "doc":  "The unique key identifier for an alarm"},
+    {"name": "severity", "type": "AlarmSeverity", "doc": "Indicates if an alarm is active or not, and if active, what severity"}
   ]
 }

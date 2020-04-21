@@ -5,8 +5,8 @@
   "fields" : [
     {"name": "name", "type": "string"},
     {"name": "type", "type": "ShelvedAlarmType"},
-    {"name": "expiration", "type": "string"},
+    {"name": "expiration", "type": "long", "logicalType" : "timestamp-millis"},
     {"name": "user", "type": "string"},
-    {"name": "timestamp", "type": "string"}
+    {"name": "timestamp", "type": "long", "logicalType" : "timestamp-millis"}
   ]
 }
