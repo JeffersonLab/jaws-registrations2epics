@@ -1,5 +1,9 @@
 package org.jlab.kafka.producer;
 
+import io.confluent.kafka.serializers.KafkaAvroSerializer;
+
+import org.jlab.AlarmMetadata;
+
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -9,21 +13,37 @@ import java.util.Properties;
 
 public class AlarmGenerator {
     public void start() throws IOException {
-        String url = System.getenv("KAFKA_URL");
+        String kafkaUrl = System.getenv("KAFKA_URL");
+        String registryUrl = System.getenv("SCHEMA_REGISTRY_URL");
 
-        if(url == null) {
+        if(kafkaUrl == null) {
             throw new IOException("Environment variable KAFKA_URL not found");
         }
 
+        if(registryUrl == null) {
+            throw new IOException("Environment variable SCHEMA_REGISTRY_URL not found");
+        }
+
         Properties props = new Properties();
-        props.put("bootstrap.servers", url);
+        props.put("bootstrap.servers", kafkaUrl);
         props.put("acks", "all");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        props.put("value.serializer", KafkaAvroSerializer.class);
+        props.put("schema.registry.url", registryUrl);
 
-        Producer<String, String> producer = new KafkaProducer<>(props);
-        for (int i = 0; i < 100; i++)
-            producer.send(new ProducerRecord<String, String>("alarms", Integer.toString(i), Integer.toString(i)));
+        Producer<String, AlarmMetadata> producer = new KafkaProducer<>(props);
+        for (int i = 0; i < 100; i++) {
+            AlarmMetadata metadata = new AlarmMetadata();
+
+            metadata.setName("alarm " + i);
+            metadata.setCategory("Other");
+            metadata.setDocUrl("");
+            metadata.setFlavor("");
+            metadata.setLocation("MCC");
+            metadata.setOpsEdmScreenPath("/cs/opshome/edm");
+
+            producer.send(new ProducerRecord<String, AlarmMetadata>("alarms", Integer.toString(i), metadata));
+        }
 
         producer.close();
     }
