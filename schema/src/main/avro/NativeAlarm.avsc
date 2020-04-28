@@ -1,0 +1,8 @@
+{
+  "name": "NativeAlarm",
+  "namespace": "org.jlab",
+  "type": "record",
+  "fields" : [
+    {"name": "pv", "type": "string"}
+  ]
+}

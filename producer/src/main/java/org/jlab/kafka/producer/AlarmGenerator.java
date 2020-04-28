@@ -7,6 +7,8 @@ import org.jlab.AlarmMetadata;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.jlab.NativeAlarm;
+import org.jlab.StreamsAlarm;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -34,11 +36,22 @@ public class AlarmGenerator {
         Producer<String, AlarmMetadata> producer = new KafkaProducer<>(props);
         for (int i = 0; i < 100; i++) {
             AlarmMetadata metadata = new AlarmMetadata();
+            NativeAlarm nativeType = new NativeAlarm();
+            StreamsAlarm streamsType = new StreamsAlarm();
+            nativeType.pv = "some pv name goes here";
+            streamsType.jarPath = "some path goes here";
+
+
+            Object type = nativeType;
+
+            if(i % 2 == 0) {
+                type = streamsType;
+            }
 
             metadata.setName("alarm " + i);
             metadata.setCategory("Other");
             metadata.setDocUrl("");
-            metadata.setFlavor("");
+            metadata.setType(type);
             metadata.setLocation("MCC");
             metadata.setOpsEdmScreenPath("/cs/opshome/edm");
 
