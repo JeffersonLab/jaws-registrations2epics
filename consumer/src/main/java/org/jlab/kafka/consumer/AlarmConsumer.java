@@ -1,15 +1,19 @@
 package org.jlab.kafka.consumer;
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.common.TopicPartition;
 import org.jlab.AlarmMetadata;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Properties;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 public class AlarmConsumer {
     public void start() throws IOException {
@@ -29,15 +33,30 @@ public class AlarmConsumer {
         props.put("group.id", "test");
         props.put("enable.auto.commit", "true");
         props.put("auto.commit.interval.ms", "1000");
+        //props.put("auto.offset.reset", "earliest");
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", KafkaAvroDeserializer.class);
         props.put("schema.registry.url", registryUrl);
-        KafkaConsumer<String, AlarmMetadata> consumer = new KafkaConsumer<>(props);
-        consumer.subscribe(Arrays.asList("alarms"));
-        while (true) {
-            ConsumerRecords<String, AlarmMetadata> records = consumer.poll(Duration.ofMillis(100));
-            for (ConsumerRecord<String, AlarmMetadata> record : records)
-                System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
+
+
+        try(KafkaConsumer<String, AlarmMetadata> consumer = new KafkaConsumer<>(props)) {
+
+            consumer.subscribe(Collections.singletonList("alarms"), new ConsumerRebalanceListener() {
+
+                @Override
+                public void onPartitionsRevoked(Collection<TopicPartition> partitions) {}
+
+                @Override
+                public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+                    consumer.seekToBeginning(partitions);
+                }
+            });
+
+            while (true) {
+                ConsumerRecords<String, AlarmMetadata> records = consumer.poll(Duration.ofMillis(100));
+                for (ConsumerRecord<String, AlarmMetadata> record : records)
+                    System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
+            }
         }
     }
 
