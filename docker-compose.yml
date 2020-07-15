@@ -69,12 +69,10 @@ services:
     volumes:
       - ./examples/connect-config:/config
 
-  client:
+  console:
     image: slominskir/kafka-alarm-system:0.1.0
-    tty: true
-    stdin_open: true
-    hostname: client
-    container_name: client
+    hostname: console
+    container_name: console
     depends_on:
       - zookeeper
       - kafka
@@ -83,10 +81,6 @@ services:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
       ALARM_DEFINITIONS: "channel1|channel1|INJ|RF|/|/,channel2|channel2|INJ|RF|/|/,channel3|channel3|INJ|RF|/|/"
-    entrypoint:
-      - /entrypoint/docker-entrypoint.sh
-    volumes:
-      - ./examples/client-entrypoint:/entrypoint
 
   streams:
     build:
@@ -102,7 +96,7 @@ services:
       - registry
       - softioc
       - connect
-      - client
+      - console
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
