@@ -15,7 +15,7 @@ docker-compose up
 ```
 3. Monitor active alarms
 ```
-docker exec -it client /scripts/active-alarms/list-active.py --monitor
+docker exec -it console /scripts/active-alarms/list-active.py --monitor
 ```
 4. Trip an EPICS alarm  
 ```
