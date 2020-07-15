@@ -1,4 +1,4 @@
-rootProject.name = 'kafka-alarms'
+rootProject.name = 'kafka-streams-epics-alarms'
 include 'producer'
 include 'consumer'
 include 'testrule'
