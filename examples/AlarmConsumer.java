@@ -1,4 +1,4 @@
-package org.jlab.kafka.consumer;
+package org.jlab.kafka.streams;
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import org.apache.kafka.clients.consumer.*;
@@ -7,13 +7,9 @@ import org.jlab.AlarmMetadata;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Properties;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 public class AlarmConsumer {
     public void start() throws IOException {

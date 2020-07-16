@@ -1,8 +1,0 @@
-{
-  "name": "StreamsAlarm",
-  "namespace": "org.jlab",
-  "type": "record",
-  "fields" : [
-    {"name": "jarPath", "type": "string"}
-  ]
-}

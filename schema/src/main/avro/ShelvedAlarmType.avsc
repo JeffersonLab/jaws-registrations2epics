@@ -1,6 +1,0 @@
-{
-  "name": "ShelvedAlarmType",
-  "namespace": "org.jlab",
-  "type": "enum",
-  "symbols" : ["ACKNOWLEDGED", "DISABLED"]
-}

@@ -1,4 +1,4 @@
-package org.jlab.kafka.producer;
+package org.jlab.kafka.streams;
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 
