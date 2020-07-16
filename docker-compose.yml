@@ -98,3 +98,5 @@ services:
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
+    volumes:
+      - ./build/install/kafka-streams-epics-alarms:/opt/kafka-streams-epics-alarms
