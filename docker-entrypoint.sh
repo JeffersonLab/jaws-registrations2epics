@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -cp /opt/ca-passthrough.jar CAPassthrough
+/opt/kafka-streams-epics-alarms/bin/kafka-streams-epics-alarms

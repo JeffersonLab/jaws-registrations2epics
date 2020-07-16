@@ -86,8 +86,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        - CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
     hostname: streams
     container_name: streams
     depends_on:
