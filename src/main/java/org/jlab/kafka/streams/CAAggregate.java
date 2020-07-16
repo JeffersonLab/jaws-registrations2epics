@@ -10,8 +10,12 @@ import org.apache.kafka.streams.kstream.Produced;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class CAAggregate {
+
+    private static final Logger LOGGER = Logger.getLogger("org.jlab.kafka.streams.CAAgrregate");
 
     public static final String INPUT_TOPIC1 = "channel1";
     public static final String INPUT_TOPIC2 = "channel2";
@@ -34,17 +38,17 @@ public final class CAAggregate {
         return props;
     }
 
-    static void createTestRuleStream(final StreamsBuilder builder) {
+    static void createRuleStream(final StreamsBuilder builder) {
         KStream<String, String> source1 = builder.stream(INPUT_TOPIC1);
-        source1 = source1.mapValues(value -> "channel1 " + value);
+        source1 = source1.selectKey((k,v) -> "channel1");
 
         KStream<String, String> source2 = builder.stream(INPUT_TOPIC2);
-        source2 = source2.mapValues(value -> "channel2 " + value);
+        source2 = source2.selectKey((k,v) -> "channel2");
 
         final KStream<String, String> source = source1.merge(source2);
 
         final KStream<String, String> alarms = source.filter((k, v) -> {
-            System.out.printf("Handling msg; key = %s, value = %s%n", k, v);
+            System.out.printf("key = %s, value = %s%n", k, v);
 
             return v != null && v.contains("MAJOR_ALARM");
         });
@@ -56,7 +60,7 @@ public final class CAAggregate {
         final Properties props = getStreamsConfig();
 
         final StreamsBuilder builder = new StreamsBuilder();
-        createTestRuleStream(builder);
+        createRuleStream(builder);
         final KafkaStreams streams = new KafkaStreams(builder.build(), props);
         final CountDownLatch latch = new CountDownLatch(1);
 
