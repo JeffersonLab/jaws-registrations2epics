@@ -5,7 +5,7 @@ ARG CUSTOM_CRT_URL
 RUN git clone https://github.com/JeffersonLab/kafka-streams-epics-alarms \
     && cd ./kafka-streams-epics-alarms \
     && gradle build -x test \
-    && cp ./build/libs/ca-passthrough-rule.jar /opt \
+    && cp -r ./build/install/* /opt \
     && cp /docker-entrypoint.sh /
 
 ENTRYPOINT ["/docker-entrypoint.sh"]

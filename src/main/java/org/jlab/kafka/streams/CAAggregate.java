@@ -11,7 +11,7 @@ import org.apache.kafka.streams.kstream.Produced;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
-public final class CAPassthrough {
+public final class CAAggregate {
 
     public static final String INPUT_TOPIC1 = "channel1";
     public static final String INPUT_TOPIC2 = "channel2";
@@ -19,7 +19,7 @@ public final class CAPassthrough {
 
     static Properties getStreamsConfig() {
         final Properties props = new Properties();
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "streams-test-rule");
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "streams-ca-aggregate");
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "kafkatest:9092");
         props.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
@@ -56,7 +56,7 @@ public final class CAPassthrough {
         final CountDownLatch latch = new CountDownLatch(1);
 
         // attach shutdown handler to catch control-c
-        Runtime.getRuntime().addShutdownHook(new Thread("streams-ca-passthrough-shutdown-hook") {
+        Runtime.getRuntime().addShutdownHook(new Thread("streams-ca-aggregate-shutdown-hook") {
             @Override
             public void run() {
                 streams.close();
