@@ -34,7 +34,6 @@ build {
 distributions {
     main {
         contents {
-            from jar
             from (project.configurations.runtime)
         }
     }

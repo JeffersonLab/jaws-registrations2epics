@@ -47,10 +47,12 @@ public final class CAAggregate {
 
         final KStream<String, String> source = source1.merge(source2);
 
+        boolean changed = true; // TODO: We must store previous value of SEVR field and compare with new value!
+
         final KStream<String, String> alarms = source.filter((k, v) -> {
             System.out.printf("key = %s, value = %s%n", k, v);
 
-            return v != null && v.contains("MAJOR_ALARM");
+            return changed;
         });
 
         alarms.to(OUTPUT_TOPIC, Produced.with(Serdes.String(), Serdes.String()));
