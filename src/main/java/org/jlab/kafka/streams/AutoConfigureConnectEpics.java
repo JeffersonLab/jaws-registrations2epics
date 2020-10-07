@@ -20,7 +20,7 @@ import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHE
 
 public final class AutoConfigureConnectEpics {
 
-    private static final Logger LOGGER = Logger.getLogger("org.jlab.kafka.streams.CAAgrregate");
+    private static final Logger LOGGER = Logger.getLogger("org.jlab.kafka.streams.AutoConfigureConnectEpics");
 
     // TODO: these need to be configurable
     public static final String INPUT_TOPIC = "registered-alarms";
@@ -58,7 +58,7 @@ public final class AutoConfigureConnectEpics {
         final KStream<String, RegisteredAlarm> input = builder.stream(INPUT_TOPIC, Consumed.with(Serdes.String(), serde));
 
         final KStream<String, String> output = input.filter((k, v) -> {
-            System.out.printf("key = %s, value = %s%n", k, v);
+            //System.err.printf("key = %s, value = %s%n", k, v);
 
             return v.getProducer() instanceof DirectCAAlarm;
         }).map((key, value) -> new KeyValue<>(toJsonKey(key), toJsonValue()));
@@ -69,11 +69,11 @@ public final class AutoConfigureConnectEpics {
     }
 
     private static String toJsonKey(String avroKey) {
-        return "{\"topic\": \"active-alarms\", \"channel\": \"" + avroKey + "\"}";
+        return "{\"topic\":\"active-alarms\",\"channel\":\"" + avroKey + "\"}";
     }
 
     private static String toJsonValue() {
-        return "{\"mask\": \"a\"}";
+        return "{\"mask\":\"a\"}";
     }
 
     public static void main(final String[] args) {
