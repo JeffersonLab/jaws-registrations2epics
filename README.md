@@ -17,5 +17,5 @@ docker exec -it console /scripts/registered-alarms/set-registered.py channel1 --
 ```
 4. Verify that the epics-channels command topic recieved a new channel to monitor 
 ```
-docker exec kafka /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic epics-channels --from-beginning
+docker exec kafka /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic epics-channels --from-beginning --property "parse.key=true" --property "key.separator==" 
 ```
