@@ -15,7 +15,7 @@ docker-compose up
 ```
 docker exec -it console /scripts/registered-alarms/set-registered.py channel1 --producerpv channel1 --location INJ --category RF --docurl / --edmpath / 
 ```
-4. Verify that the epics-channels command topic recieved a new channel to monitor 
+4. Verify that the epics-channels command topic received a new channel to monitor 
 ```
 docker exec kafka /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic epics-channels --from-beginning --property "print.key=true" --property "key.separator==" 
 ```
