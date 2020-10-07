@@ -19,8 +19,3 @@ docker exec -it console /scripts/registered-alarms/set-registered.py channel1 --
 ```
 docker exec kafka /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic epics-channels --from-beginning
 ```
-
-This compose extends the [kafka-alarm-system](https://github.com/JeffersonLab/kafka-alarm-system) with the following services:
-   - [Connect EPICS](https://github.com/JeffersonLab/epics2kafka) - transfer EPICS CA messages into Kafka, one topic per EPICS channel
-   - Streams EPICS Alarms - defined in this project; conditionally consolidates and propogates EPICS alarms read from Connect EPICS topics to the __active-alarms__ topic based on configuration in the master __alarms__ topic
-   - [softioc](https://github.com/JeffersonLab/softioc) - hosts an EPICS CA database, a softioc is used for testing and demonstration, but this could be replaced with an entire EPICS environment
