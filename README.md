@@ -1,5 +1,5 @@
 # kafka-streams-epics-alarms
-A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application to continuously and conditionally populate the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) epics-channels topic from the [kafka-alarm-system](https://github.com/JeffersonLab/kafka-alarm-system) topic registered-alarms.  
+A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application to continuously populate the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) epics-channels topic from the [kafka-alarm-system](https://github.com/JeffersonLab/kafka-alarm-system) topic registered-alarms given messages containing producer type "epics2kafka".  
 
 ## Quick Start with Docker 
 1. Grab project
