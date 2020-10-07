@@ -4,10 +4,11 @@ plugins {
     id 'distribution'
 }
 
-group 'org.jlab.kafka'
-version '0.0.0'
+group 'org.jlab.kafka.streams'
+version '0.1.0'
 
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -20,11 +21,11 @@ dependencies {
 }
 
 jar {
-    archiveName "ca-aggregate.jar"
+    archiveName "configureConnectEpics.jar"
 }
 
 application {
-    mainClassName = 'org.jlab.kafka.streams.CAAggregate'
+    mainClassName = 'org.jlab.kafka.streams.AutoConfigureConnectEpics'
 }
 
 build {

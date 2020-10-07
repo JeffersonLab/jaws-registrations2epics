@@ -13,7 +13,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public final class CAAggregate {
+public final class AutoConfigureConnectEpics {
 
     private static final Logger LOGGER = Logger.getLogger("org.jlab.kafka.streams.CAAgrregate");
 
