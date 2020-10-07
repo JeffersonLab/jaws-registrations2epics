@@ -11,13 +11,13 @@ cd kafka-streams-epics-alarms
 ```
 docker-compose up
 ```
-3. Monitor active alarms
+3. Register an alarm
 ```
-docker exec -it console /scripts/active-alarms/list-active.py --monitor
+docker exec -it console /scripts/registered-alarms/set-registered.py channel1 --producerpv channel1 --location INJ --category RF --docurl / --edmpath / 
 ```
-4. Trip an EPICS alarm  
+4. Verify that the epics-channels command topic recieved a new channel to monitor 
 ```
-docker exec softioc caput channel1 1
+docker exec kafka /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic epics-channels --from-beginning
 ```
 
 This compose extends the [kafka-alarm-system](https://github.com/JeffersonLab/kafka-alarm-system) with the following services:
