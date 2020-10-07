@@ -6,10 +6,6 @@ pluginManagement {
             name "JCenter Gradle Plugins"
             url  "https://dl.bintray.com/gradle/gradle-plugins"
         }
-        maven {
-            name "alternate"
-            url "https://dl.bintray.com/commercehub-oss/main/"
-        }
     }
 }
 
