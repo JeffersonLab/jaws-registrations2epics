@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 
 import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 
-public final class AutoConfigureConnectEpics {
+public final class Registrations2Epics {
 
     private static final Logger LOGGER = Logger.getLogger("org.jlab.kafka.streams.AutoConfigureConnectEpics");
 

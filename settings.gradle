@@ -9,4 +9,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'kafka-streams-epics-alarms'
+rootProject.name = 'registrations2epics'

@@ -28,11 +28,11 @@ dependencies {
 }
 
 jar {
-    archiveName "configureConnectEpics.jar"
+    archiveName "registrations2epics.jar"
 }
 
 application {
-    mainClassName = 'org.jlab.kafka.streams.AutoConfigureConnectEpics'
+    mainClassName = 'org.jlab.kafka.streams.Registrations2Epics'
 }
 
 build {
