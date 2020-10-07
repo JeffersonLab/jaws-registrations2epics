@@ -1,12 +1,15 @@
 package org.jlab.kafka.streams;
 
+import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.*;
+import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
+import org.jlab.kafka.alarms.DirectCAAlarm;
+import org.jlab.kafka.alarms.RegisteredAlarm;
+import sun.security.util.RegisteredDomain;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -45,24 +48,38 @@ public final class AutoConfigureConnectEpics {
         return props;
     }
 
-    static void createRuleStream(final StreamsBuilder builder) {
-        KStream<String, String> input = builder.stream(INPUT_TOPIC);
+    static Topology createRuleTopology(Properties props) {
+        final StreamsBuilder builder = new StreamsBuilder();
+        final SpecificAvroSerde<RegisteredAlarm> serde = new SpecificAvroSerde<>();
+        Map<String, String> config = new HashMap<>();
+        config.put(SCHEMA_REGISTRY_URL_CONFIG, props.getProperty(SCHEMA_REGISTRY_URL_CONFIG));
+        serde.configure(config, false);
+
+        final KStream<String, RegisteredAlarm> input = builder.stream(INPUT_TOPIC, Consumed.with(Serdes.String(), serde));
 
         final KStream<String, String> output = input.filter((k, v) -> {
             System.out.printf("key = %s, value = %s%n", k, v);
 
-            return v.contains("epics2kafka");
-        });
+            return v.getProducer() instanceof DirectCAAlarm;
+        }).map((key, value) -> new KeyValue<>(toJsonKey(key), toJsonValue()));
 
         output.to(OUTPUT_TOPIC, Produced.with(Serdes.String(), Serdes.String()));
+
+        return builder.build();
+    }
+
+    private static String toJsonKey(String avroKey) {
+        return "{\"topic\": \"active-alarms\", \"channel\": \"" + avroKey + "\"}";
+    }
+
+    private static String toJsonValue() {
+        return "{\"mask\": \"a\"}";
     }
 
     public static void main(final String[] args) {
         final Properties props = getStreamsConfig();
-
-        final StreamsBuilder builder = new StreamsBuilder();
-        createRuleStream(builder);
-        final KafkaStreams streams = new KafkaStreams(builder.build(), props);
+        final Topology top = createRuleTopology(props);
+        final KafkaStreams streams = new KafkaStreams(top, props);
         final CountDownLatch latch = new CountDownLatch(1);
 
         // attach shutdown handler to catch control-c
