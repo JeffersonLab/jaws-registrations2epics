@@ -9,4 +9,10 @@ pluginManagement {
     }
 }
 
+System.setProperty('http.proxyHost','jprox.jlab.org')
+System.setProperty('http.proxyPort','8080')
+
+System.setProperty('https.proxyHost','jprox.jlab.org')
+System.setProperty('https.proxyPort','8081')
+
 rootProject.name = 'registrations2epics'
