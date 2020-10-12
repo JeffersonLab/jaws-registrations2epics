@@ -10,4 +10,4 @@ while [ $(curl -s -o /dev/null -w %{http_code} $url/subjects) -eq 000 ] ; do
   sleep 5
 done
 
-/opt/kafka-streams-epics-alarms/bin/kafka-streams-epics-alarms
+/opt/registrations2epics/bin/registrations2epics
