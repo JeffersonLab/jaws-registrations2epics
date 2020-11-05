@@ -2,6 +2,7 @@ package org.jlab.kafka.streams;
 
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.*;
 import org.apache.kafka.streams.kstream.Consumed;
@@ -25,6 +26,11 @@ public final class Registrations2Epics {
     // TODO: these need to be configurable
     public static final String INPUT_TOPIC = "registered-alarms";
     public static final String OUTPUT_TOPIC = "epics-channels";
+
+    public static final Serde<String> INPUT_KEY_SERDE = Serdes.String();
+    public static final SpecificAvroSerde<RegisteredAlarm> INPUT_VALUE_SERDE = new SpecificAvroSerde();
+    public static final Serde<String> OUTPUT_KEY_SERDE = INPUT_KEY_SERDE;
+    public static final Serde<String> OUTPUT_VALUE_SERDE = INPUT_KEY_SERDE;
 
     static Properties getStreamsConfig() {
 
@@ -50,12 +56,11 @@ public final class Registrations2Epics {
 
     static Topology createRuleTopology(Properties props) {
         final StreamsBuilder builder = new StreamsBuilder();
-        final SpecificAvroSerde<RegisteredAlarm> serde = new SpecificAvroSerde<>();
         Map<String, String> config = new HashMap<>();
         config.put(SCHEMA_REGISTRY_URL_CONFIG, props.getProperty(SCHEMA_REGISTRY_URL_CONFIG));
-        serde.configure(config, false);
+        INPUT_VALUE_SERDE.configure(config, false);
 
-        final KStream<String, RegisteredAlarm> input = builder.stream(INPUT_TOPIC, Consumed.with(Serdes.String(), serde));
+        final KStream<String, RegisteredAlarm> input = builder.stream(INPUT_TOPIC, Consumed.with(INPUT_KEY_SERDE, INPUT_VALUE_SERDE));
 
         final KStream<String, String> output = input.filter((k, v) -> {
             //System.err.printf("key = %s, value = %s%n", k, v);
@@ -63,7 +68,7 @@ public final class Registrations2Epics {
             return v.getProducer() instanceof DirectCAAlarm;
         }).map((key, value) -> new KeyValue<>(toJsonKey(key), toJsonValue()));
 
-        output.to(OUTPUT_TOPIC, Produced.with(Serdes.String(), Serdes.String()));
+        output.to(OUTPUT_TOPIC, Produced.with(OUTPUT_KEY_SERDE, OUTPUT_VALUE_SERDE));
 
         return builder.build();
     }
