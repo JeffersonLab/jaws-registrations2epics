@@ -65,8 +65,10 @@ public final class Registrations2Epics {
         final KStream<String, String> output = input.filter((k, v) -> {
             //System.err.printf("key = %s, value = %s%n", k, v);
 
-            return v.getProducer() instanceof DirectCAAlarm;
-        }).map((key, value) -> new KeyValue<>(toJsonKey(key), toJsonValue()));
+            // Note: we perform un-monitor requests on all un-register messages (regardless of producer)
+
+            return v == null || v.getProducer() instanceof DirectCAAlarm;
+        }).map((key, value) -> new KeyValue<>(toJsonKey(key), toJsonValue(value)));
 
         output.to(OUTPUT_TOPIC, Produced.with(OUTPUT_KEY_SERDE, OUTPUT_VALUE_SERDE));
 
@@ -77,8 +79,8 @@ public final class Registrations2Epics {
         return "{\"topic\":\"active-alarms\",\"channel\":\"" + avroKey + "\"}";
     }
 
-    private static String toJsonValue() {
-        return "{\"mask\":\"a\"}";
+    private static String toJsonValue(RegisteredAlarm value) {
+        return value == null ? null : "{\"mask\":\"a\"}";
     }
 
     public static void main(final String[] args) {
