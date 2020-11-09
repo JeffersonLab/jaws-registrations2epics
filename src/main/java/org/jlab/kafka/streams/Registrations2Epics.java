@@ -19,6 +19,10 @@ import java.util.logging.Logger;
 
 import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 
+/**
+ * A Kafka Streams application to populate the epics2kafka epics-channels topic from the kafka-alarm-system
+ * registered-alarms topic for the subset of messages of type DirectCAAlarm.
+ */
 public final class Registrations2Epics {
 
     private static final Logger LOGGER = Logger.getLogger("org.jlab.kafka.streams.Registrations2Epics");
@@ -54,7 +58,13 @@ public final class Registrations2Epics {
         return props;
     }
 
-    static Topology createRuleTopology(Properties props) {
+    /**
+     * Create the Kafka Streams Domain Specific Language (DSL) Topology.
+     *
+     * @param props The streams configuration
+     * @return The Topology
+     */
+    static Topology createTopology(Properties props) {
         final StreamsBuilder builder = new StreamsBuilder();
         Map<String, String> config = new HashMap<>();
         config.put(SCHEMA_REGISTRY_URL_CONFIG, props.getProperty(SCHEMA_REGISTRY_URL_CONFIG));
@@ -70,7 +80,7 @@ public final class Registrations2Epics {
 
         final KStream<String, RegisteredAlarm> input = builder.stream(INPUT_TOPIC, Consumed.with(INPUT_KEY_SERDE, INPUT_VALUE_SERDE));
 
-        final KStream<String, String> output = input.transform(new MsgTransformer(storeBuilder.name()), storeBuilder.name());
+        final KStream<String, String> output = input.transform(new MsgTransformerFactory(storeBuilder.name()), storeBuilder.name());
 
         output.to(OUTPUT_TOPIC, Produced.with(OUTPUT_KEY_SERDE, OUTPUT_VALUE_SERDE));
 
@@ -85,9 +95,12 @@ public final class Registrations2Epics {
         return registration == null ? null : "{\"mask\":\"a\"}";
     }
 
-    public static void main(final String[] args) {
+    /**
+     * Entrypoint of the application.
+     */
+    public static void main() {
         final Properties props = getStreamsConfig();
-        final Topology top = createRuleTopology(props);
+        final Topology top = createTopology(props);
         final KafkaStreams streams = new KafkaStreams(top, props);
         final CountDownLatch latch = new CountDownLatch(1);
 
@@ -109,11 +122,20 @@ public final class Registrations2Epics {
         System.exit(0);
     }
 
-    private static final class MsgTransformer implements TransformerSupplier<String, RegisteredAlarm, KeyValue<String, String>> {
+    /**
+     * Factory to create Kafka Streams Transformer instances; references a stateStore to maintain previous
+     * RegisteredAlarms.
+     */
+    private static final class MsgTransformerFactory implements TransformerSupplier<String, RegisteredAlarm, KeyValue<String, String>> {
 
         private final String storeName;
 
-        public MsgTransformer(String storeName) {
+        /**
+         * Create a new MsgTransformerFactory.
+         *
+         * @param storeName The state store name
+         */
+        public MsgTransformerFactory(String storeName) {
             this.storeName = storeName;
         }
 

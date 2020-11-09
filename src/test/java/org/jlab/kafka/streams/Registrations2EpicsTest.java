@@ -11,7 +11,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.NoSuchElementException;
 import java.util.Properties;
 
 import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
@@ -26,7 +25,7 @@ public class Registrations2EpicsTest {
     public void setup() {
         final Properties streamsConfig = Registrations2Epics.getStreamsConfig();
         streamsConfig.put(SCHEMA_REGISTRY_URL_CONFIG, "mock://testing");
-        final Topology top = Registrations2Epics.createRuleTopology(streamsConfig);
+        final Topology top = Registrations2Epics.createTopology(streamsConfig);
 
         // setup test driver
         final Properties props = new Properties();
