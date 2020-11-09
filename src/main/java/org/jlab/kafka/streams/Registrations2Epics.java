@@ -10,11 +10,9 @@ import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Produced;
 import org.jlab.kafka.alarms.DirectCAAlarm;
 import org.jlab.kafka.alarms.RegisteredAlarm;
-import sun.security.util.RegisteredDomain;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
@@ -68,19 +66,28 @@ public final class Registrations2Epics {
             // Note: we perform un-monitor requests on all un-register messages (regardless of producer)
 
             return v == null || v.getProducer() instanceof DirectCAAlarm;
-        }).map((key, value) -> new KeyValue<>(toJsonKey(key), toJsonValue(value)));
+        }).map((key, value) -> new KeyValue<>(toJsonKey(value), toJsonValue(value)));
 
         output.to(OUTPUT_TOPIC, Produced.with(OUTPUT_KEY_SERDE, OUTPUT_VALUE_SERDE));
 
         return builder.build();
     }
 
-    private static String toJsonKey(String avroKey) {
-        return "{\"topic\":\"active-alarms\",\"channel\":\"" + avroKey + "\"}";
+    private static String toJsonKey(RegisteredAlarm registration) {
+
+        String channel;
+
+        if(registration != null) {
+            channel = ((DirectCAAlarm) registration.getProducer()).getPv();
+        } else {
+            channel = "?";
+        }
+
+        return "{\"topic\":\"active-alarms\",\"channel\":\"" + channel + "\"}";
     }
 
-    private static String toJsonValue(RegisteredAlarm value) {
-        return value == null ? null : "{\"mask\":\"a\"}";
+    private static String toJsonValue(RegisteredAlarm registration) {
+        return registration == null ? null : "{\"mask\":\"a\"}";
     }
 
     public static void main(final String[] args) {

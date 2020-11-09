@@ -7,6 +7,7 @@ import org.jlab.kafka.alarms.AlarmLocation;
 import org.jlab.kafka.alarms.DirectCAAlarm;
 import org.jlab.kafka.alarms.RegisteredAlarm;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,8 +49,8 @@ public class Registrations2EpicsTest {
     public void tombstoneMsg() {
         RegisteredAlarm registration = null;
         inputTopic.pipeInput("alarm1", registration);
-        KeyValue<String, String> key = outputTopic.readKeyValue();
-        System.err.println(key);
+        KeyValue<String, String> result = outputTopic.readKeyValue();
+        Assert.assertNull(result.value);
     }
 
     @Test
@@ -63,7 +64,8 @@ public class Registrations2EpicsTest {
         registration.setDocurl("/");
         registration.setEdmpath("/");
         inputTopic.pipeInput("alarm1", registration);
-        KeyValue<String, String> key = outputTopic.readKeyValue();
-        System.err.println(key);
+        KeyValue<String, String> result = outputTopic.readKeyValue();
+        Assert.assertEquals("{\"topic\":\"active-alarms\",\"channel\":\"testpv\"}", result.key);
+        Assert.assertEquals("{\"mask\":\"a\"}", result.value);
     }
 }
