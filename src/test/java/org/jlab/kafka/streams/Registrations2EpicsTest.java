@@ -11,6 +11,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.NoSuchElementException;
 import java.util.Properties;
 
 import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
@@ -19,6 +20,7 @@ public class Registrations2EpicsTest {
     private TopologyTestDriver testDriver;
     private TestInputTopic<String, RegisteredAlarm> inputTopic;
     private TestOutputTopic<String, String> outputTopic;
+    private RegisteredAlarm alarm1;
 
     @Before
     public void setup() {
@@ -37,6 +39,15 @@ public class Registrations2EpicsTest {
         // setup test topics
         inputTopic = testDriver.createInputTopic(Registrations2Epics.INPUT_TOPIC, Registrations2Epics.INPUT_KEY_SERDE.serializer(), Registrations2Epics.INPUT_VALUE_SERDE.serializer());
         outputTopic = testDriver.createOutputTopic(Registrations2Epics.OUTPUT_TOPIC, Registrations2Epics.OUTPUT_KEY_SERDE.deserializer(), Registrations2Epics.OUTPUT_VALUE_SERDE.deserializer());
+
+        DirectCAAlarm direct = new DirectCAAlarm();
+        direct.setPv("channel1");
+        alarm1 = new RegisteredAlarm();
+        alarm1.setProducer(direct);
+        alarm1.setCategory(AlarmCategory.Magnet);
+        alarm1.setLocation(AlarmLocation.INJ);
+        alarm1.setDocurl("/");
+        alarm1.setEdmpath("/");
     }
 
     @After
@@ -44,28 +55,26 @@ public class Registrations2EpicsTest {
         testDriver.close();
     }
 
+    @Test
+    public void matchedTombstoneMsg() {
+        inputTopic.pipeInput("alarm1", alarm1);
+        inputTopic.pipeInput("alarm1", null);
+        KeyValue<String, String> result = outputTopic.readKeyValuesToList().get(1);
+        Assert.assertNull(result.value);
+    }
+
 
     @Test
-    public void tombstoneMsg() {
-        RegisteredAlarm registration = null;
-        inputTopic.pipeInput("alarm1", registration);
-        KeyValue<String, String> result = outputTopic.readKeyValue();
-        Assert.assertNull(result.value);
+    public void unmatchedTombstoneMsg() {
+        inputTopic.pipeInput("alarm1", null);
+        Assert.assertTrue(outputTopic.isEmpty()); // Cannot transform a tombstone without a prior registration!
     }
 
     @Test
     public void regularMsg() {
-        RegisteredAlarm registration = new RegisteredAlarm();
-        DirectCAAlarm direct = new DirectCAAlarm();
-        direct.setPv("testpv");
-        registration.setProducer(direct);
-        registration.setCategory(AlarmCategory.Magnet);
-        registration.setLocation(AlarmLocation.INJ);
-        registration.setDocurl("/");
-        registration.setEdmpath("/");
-        inputTopic.pipeInput("alarm1", registration);
+        inputTopic.pipeInput("alarm1", alarm1);
         KeyValue<String, String> result = outputTopic.readKeyValue();
-        Assert.assertEquals("{\"topic\":\"active-alarms\",\"channel\":\"testpv\"}", result.key);
+        Assert.assertEquals("{\"topic\":\"active-alarms\",\"channel\":\"channel1\"}", result.key);
         Assert.assertEquals("{\"mask\":\"a\"}", result.value);
     }
 }

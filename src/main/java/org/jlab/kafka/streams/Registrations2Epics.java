@@ -5,9 +5,11 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.*;
-import org.apache.kafka.streams.kstream.Consumed;
-import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.Produced;
+import org.apache.kafka.streams.kstream.*;
+import org.apache.kafka.streams.processor.ProcessorContext;
+import org.apache.kafka.streams.state.KeyValueStore;
+import org.apache.kafka.streams.state.StoreBuilder;
+import org.apache.kafka.streams.state.Stores;
 import org.jlab.kafka.alarms.DirectCAAlarm;
 import org.jlab.kafka.alarms.RegisteredAlarm;
 
@@ -58,31 +60,24 @@ public final class Registrations2Epics {
         config.put(SCHEMA_REGISTRY_URL_CONFIG, props.getProperty(SCHEMA_REGISTRY_URL_CONFIG));
         INPUT_VALUE_SERDE.configure(config, false);
 
+        final StoreBuilder<KeyValueStore<String, RegisteredAlarm>> storeBuilder = Stores.keyValueStoreBuilder(
+                Stores.persistentKeyValueStore("Registrations2EpicsStore"),
+                INPUT_KEY_SERDE,
+                INPUT_VALUE_SERDE
+        ).withCachingEnabled();
+
+        builder.addStateStore(storeBuilder);
+
         final KStream<String, RegisteredAlarm> input = builder.stream(INPUT_TOPIC, Consumed.with(INPUT_KEY_SERDE, INPUT_VALUE_SERDE));
 
-        final KStream<String, String> output = input.filter((k, v) -> {
-            //System.err.printf("key = %s, value = %s%n", k, v);
-
-            // Note: we perform un-monitor requests on all un-register messages (regardless of producer)
-
-            return v == null || v.getProducer() instanceof DirectCAAlarm;
-        }).map((key, value) -> new KeyValue<>(toJsonKey(value), toJsonValue(value)));
+        final KStream<String, String> output = input.transform(new MsgTransformer(storeBuilder.name()), storeBuilder.name());
 
         output.to(OUTPUT_TOPIC, Produced.with(OUTPUT_KEY_SERDE, OUTPUT_VALUE_SERDE));
 
         return builder.build();
     }
 
-    private static String toJsonKey(RegisteredAlarm registration) {
-
-        String channel;
-
-        if(registration != null) {
-            channel = ((DirectCAAlarm) registration.getProducer()).getPv();
-        } else {
-            channel = "?";
-        }
-
+    private static String toJsonKey(String channel) {
         return "{\"topic\":\"active-alarms\",\"channel\":\"" + channel + "\"}";
     }
 
@@ -112,5 +107,57 @@ public final class Registrations2Epics {
             System.exit(1);
         }
         System.exit(0);
+    }
+
+    private static final class MsgTransformer implements TransformerSupplier<String, RegisteredAlarm, KeyValue<String, String>> {
+
+        private final String storeName;
+
+        public MsgTransformer(String storeName) {
+            this.storeName = storeName;
+        }
+
+        /**
+         * Return a new {@link Transformer} instance.
+         *
+         * @return a new {@link Transformer} instance
+         */
+        @Override
+        public Transformer<String, RegisteredAlarm, KeyValue<String, String>> get() {
+            return new Transformer<String, RegisteredAlarm, KeyValue<String, String>>() {
+                private KeyValueStore<String, RegisteredAlarm> store;
+
+                @Override
+                public void init(ProcessorContext context) {
+                    store = (KeyValueStore<String, RegisteredAlarm>) context.getStateStore(storeName);
+                }
+
+                @Override
+                public KeyValue<String, String> transform(String key, RegisteredAlarm value) {
+                    KeyValue<String, String> result = null;
+
+                    String channel;
+
+                    if(value == null) { // Tombstone - we need most recent non-null registration to transform
+                        RegisteredAlarm previous = store.get(key);
+                        if(previous != null) { // We only store DirectCAAlarm, so no need to check type
+                            channel = ((DirectCAAlarm)previous.getProducer()).getPv();
+                            result = KeyValue.pair(toJsonKey(channel), toJsonValue(value));
+                        }
+                    } else if(value.getProducer() instanceof DirectCAAlarm) {
+                        channel = ((DirectCAAlarm) value.getProducer()).getPv();
+                        result = KeyValue.pair(toJsonKey(channel), toJsonValue(value));
+                        store.put(key, value);  // Store most recent non-null registration for each CA alarm (key)
+                    }
+
+                    return result;
+                }
+
+                @Override
+                public void close() {
+                    // Nothing to do
+                }
+            };
+        }
     }
 }
