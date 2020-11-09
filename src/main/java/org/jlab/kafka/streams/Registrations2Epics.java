@@ -32,7 +32,7 @@ public final class Registrations2Epics {
     public static final String OUTPUT_TOPIC = "epics-channels";
 
     public static final Serde<String> INPUT_KEY_SERDE = Serdes.String();
-    public static final SpecificAvroSerde<RegisteredAlarm> INPUT_VALUE_SERDE = new SpecificAvroSerde();
+    public static final SpecificAvroSerde<RegisteredAlarm> INPUT_VALUE_SERDE = new SpecificAvroSerde<>();
     public static final Serde<String> OUTPUT_KEY_SERDE = INPUT_KEY_SERDE;
     public static final Serde<String> OUTPUT_VALUE_SERDE = INPUT_KEY_SERDE;
 
@@ -47,11 +47,11 @@ public final class Registrations2Epics {
         registry = (registry == null) ? "http://localhost:8081" : registry;
 
         final Properties props = new Properties();
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "auto-configure-connect-epics");
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG, "registrations2epics");
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
-        props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
-        props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
+        //props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
+        //props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.put(SCHEMA_REGISTRY_URL_CONFIG, registry);
 
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
@@ -150,6 +150,7 @@ public final class Registrations2Epics {
                 private KeyValueStore<String, RegisteredAlarm> store;
 
                 @Override
+                @SuppressWarnings("unchecked") // https://cwiki.apache.org/confluence/display/KAFKA/KIP-478+-+Strongly+typed+Processor+API
                 public void init(ProcessorContext context) {
                     store = (KeyValueStore<String, RegisteredAlarm>) context.getStateStore(storeName);
                 }
