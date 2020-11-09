@@ -134,7 +134,7 @@ public final class Registrations2Epics {
 
                 @Override
                 public KeyValue<String, String> transform(String key, RegisteredAlarm value) {
-                    KeyValue<String, String> result = null;
+                    KeyValue<String, String> result = null; // null returned to mean no record - when not of type DirectCAAlarm OR when an unmatched tombstone is encountered
 
                     String channel;
 
