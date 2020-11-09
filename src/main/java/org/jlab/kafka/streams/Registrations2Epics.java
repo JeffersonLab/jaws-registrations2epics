@@ -21,7 +21,7 @@ import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHE
 
 public final class Registrations2Epics {
 
-    private static final Logger LOGGER = Logger.getLogger("org.jlab.kafka.streams.AutoConfigureConnectEpics");
+    private static final Logger LOGGER = Logger.getLogger("org.jlab.kafka.streams.Registrations2Epics");
 
     // TODO: these need to be configurable
     public static final String INPUT_TOPIC = "registered-alarms";
