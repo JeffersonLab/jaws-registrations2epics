@@ -26,12 +26,7 @@ public class Registrations2EpicsTest {
         final Properties streamsConfig = Registrations2Epics.getStreamsConfig();
         streamsConfig.put(SCHEMA_REGISTRY_URL_CONFIG, "mock://testing");
         final Topology top = Registrations2Epics.createTopology(streamsConfig);
-
-        // setup test driver
-        final Properties props = new Properties();
-        props.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "testing");
-        props.setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
-        testDriver = new TopologyTestDriver(top, props);
+        testDriver = new TopologyTestDriver(top, streamsConfig);
 
         // setup test topics
         inputTopic = testDriver.createInputTopic(Registrations2Epics.INPUT_TOPIC, Registrations2Epics.INPUT_KEY_SERDE.serializer(), Registrations2Epics.INPUT_VALUE_SERDE.serializer());
