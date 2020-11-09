@@ -95,8 +95,10 @@ public final class Registrations2Epics {
 
     /**
      * Entrypoint of the application.
+     *
+     * @param args The command line arguments
      */
-    public static void main() {
+    public static void main(String[] args) {
         final Properties props = getStreamsConfig();
         final Topology top = createTopology(props);
         final KafkaStreams streams = new KafkaStreams(top, props);
