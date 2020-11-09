@@ -5,6 +5,7 @@ A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application t
  - [Quick Start with Compose](https://github.com/JeffersonLab/registrations2epics#quick-start-with-compose)
  - [Build](https://github.com/JeffersonLab/registrations2epics#build)
  - [Docker](https://github.com/JeffersonLab/registrations2epics#docker)
+ - [Tombstones](https://github.com/JeffersonLab/registrations2epics#tombstones)
 ---
 
 ## Quick Start with Compose 
@@ -37,5 +38,5 @@ docker pull slominskir/registrations2epics
 ```
 Image hosted on [DockerHub](https://hub.docker.com/r/slominskir/registrations2epics)
 
-## Transforming Tombstones
+## Tombstones
 A RegisteredAlarm record is unset via a tombstone message, but a null value means the Streams app cannot use the value to determine (1) if the message is of type DirectCAAlarm or (2) what is the name of the channel.  Both of these pieces of information are needed to produce a tombstone message to the epics-channels topic.  To make this work, the app relies on a state store to maintain the most recent RegisteredAlarm record for a given key (alarm name).   This works in the general case, but will not work in the rare corner case of an unmatched tombstone: a tombstone record is encountered, but the state store does not have a record of the previous registration given the same key.  This can occur if the registrations2epics app is offline while changes are made to the registered-alarms topic and topic compaction runs and removes a registration that was tombstoned.  In this case, an unregister message is ignored.
