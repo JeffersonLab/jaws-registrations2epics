@@ -89,8 +89,8 @@ public final class Registrations2Epics {
         return "{\"topic\":\"active-alarms\",\"channel\":\"" + channel + "\"}";
     }
 
-    private static String toJsonValue(RegisteredAlarm registration) {
-        return registration == null ? null : "{\"mask\":\"a\"}";
+    private static String toJsonValue(String outkey, RegisteredAlarm registration) {
+        return registration == null ? null : "{\"mask\":\"a\",\"outkey\":\"" + outkey + "\"}";
     }
 
     /**
@@ -165,11 +165,11 @@ public final class Registrations2Epics {
                         RegisteredAlarm previous = store.get(key);
                         if(previous != null) { // We only store DirectCAAlarm, so no need to check type
                             channel = ((DirectCAAlarm)previous.getProducer()).getPv();
-                            result = KeyValue.pair(toJsonKey(channel), toJsonValue(value));
+                            result = KeyValue.pair(toJsonKey(channel), toJsonValue(key, value));
                         }
                     } else if(value.getProducer() instanceof DirectCAAlarm) {
                         channel = ((DirectCAAlarm) value.getProducer()).getPv();
-                        result = KeyValue.pair(toJsonKey(channel), toJsonValue(value));
+                        result = KeyValue.pair(toJsonKey(channel), toJsonValue(key, value));
                         store.put(key, value);  // Store most recent non-null registration for each CA alarm (key)
                     }
 
