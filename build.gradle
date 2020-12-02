@@ -32,6 +32,13 @@ dependencies {
     testImplementation group: 'org.apache.kafka', name: 'kafka-streams-test-utils', version: '2.6.0'
 }
 
+test {
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
+}
+
 jar {
     archiveFileName = 'registrations2epics.jar'
 }
