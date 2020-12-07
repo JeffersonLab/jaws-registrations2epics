@@ -11,8 +11,8 @@ A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application t
 ## Quick Start with Compose 
 1. Grab project
 ```
-git clone https://github.com/JeffersonLab/kafka-streams-epics-alarms
-cd kafka-streams-epics-alarms
+git clone https://github.com/JeffersonLab/registrations2epics
+cd registrations2epics
 ```
 2. Launch Docker
 ```
