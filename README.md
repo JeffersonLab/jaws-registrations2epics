@@ -1,4 +1,4 @@
-# registrations2epics [![Build Status](https://travis-ci.com/JeffersonLab/registrations2epics.svg?branch=master)](https://travis-ci.com/JeffersonLab/registrations2epics)    
+# registrations2epics [![Build Status](https://travis-ci.com/JeffersonLab/registrations2epics.svg?branch=master)](https://travis-ci.com/JeffersonLab/registrations2epics) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/slominskir/registrations2epics?sort=semver)   ](https://hub.docker.com/r/slominskir/registrations2epics)
 A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application to continuously populate the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) _epics-channels_ topic from the [kafka-alarm-system](https://github.com/JeffersonLab/kafka-alarm-system) _registered-alarms_ topic for the subset of messages containing producer type __DirectCAAlarm__.  
 
 ---
