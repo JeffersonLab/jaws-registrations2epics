@@ -4,6 +4,7 @@ A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application t
 ---
  - [Quick Start with Compose](https://github.com/JeffersonLab/registrations2epics#quick-start-with-compose)
  - [Build](https://github.com/JeffersonLab/registrations2epics#build)
+ - [Deploy](https://github.com/JeffersonLab/registrations2epics#deploy)
  - [Docker](https://github.com/JeffersonLab/registrations2epics#docker)
  - [See Also](https://github.com/JeffersonLab/registrations2epics#see-also)
  ---
@@ -31,6 +32,19 @@ docker exec kafka /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:
 ```
 gradlew build
 ```
+
+## Deploy
+The Kafka Streams app is a regular Java application, and start scripts are created by the Gradle build.  Launch with:
+
+UNIX:
+```
+bin/regisrations2epics
+```
+Windows:
+```
+bin/registrations2epics.bat
+```
+
 
 ## Docker
 ```
