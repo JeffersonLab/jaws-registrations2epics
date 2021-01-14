@@ -45,7 +45,7 @@ gradlew build
 Environment Variables
 | Name | Description |
 |---|---|
-| BOOTSTRAP_SERVERS | Host and port pair pointing to a Kafka server to bootstrap the client connection to a Kafka Cluser; example: `kafka:9092` |
+| BOOTSTRAP_SERVERS | Comma-separated list of host and port pairs pointing to a Kafka server to bootstrap the client connection to a Kafka Cluser; example: `kafka:9092` |
 | SCHEMA_REGISTRY | URL to Confluent Schema Registry; example: `http://registry:8081` |
 
 ## Deploy
