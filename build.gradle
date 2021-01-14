@@ -28,7 +28,7 @@ dependencies {
     implementation "org.apache.avro:avro:1.10.0"
     implementation group: 'org.apache.kafka', name: 'kafka-streams', version: '2.6.0'
     implementation "io.confluent:kafka-streams-avro-serde:6.0.0"
-    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
+    implementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.28'
     testImplementation group: 'junit', name: 'junit', version: '4.12'
     testImplementation group: 'org.apache.kafka', name: 'kafka-streams-test-utils', version: '2.6.0'
 }
@@ -56,12 +56,31 @@ installDist.dependsOn(generateLicenseReport)
 distTar.dependsOn(generateLicenseReport)
 distZip.dependsOn(generateLicenseReport)
 
+run {
+    classpath += files('config')
+}
+
 distributions {
     main {
         contents {
             from("build/reports/dependency-license") {
                 into "dependency-license"
             }
+            from('config') {
+                into 'config'
+            }
         }
+    }
+}
+
+startScripts {
+    classpath += files('config')
+
+    // https://discuss.gradle.org/t/classpath-in-application-plugin-is-building-always-relative-to-app-home-lib-directory/2012
+    doLast {
+        def windowsScriptFile = file getWindowsScript()
+        def unixScriptFile = file getUnixScript()
+        windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\config', '%APP_HOME%\\config')
+        unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/config', '$APP_HOME/config')
     }
 }
