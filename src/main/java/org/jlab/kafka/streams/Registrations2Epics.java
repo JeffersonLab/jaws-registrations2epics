@@ -12,10 +12,11 @@ import org.apache.kafka.streams.state.StoreBuilder;
 import org.apache.kafka.streams.state.Stores;
 import org.jlab.kafka.alarms.DirectCAAlarm;
 import org.jlab.kafka.alarms.RegisteredAlarm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
-import java.util.logging.Logger;
 
 import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 
@@ -25,7 +26,7 @@ import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHE
  */
 public final class Registrations2Epics {
 
-    private static final Logger LOGGER = Logger.getLogger("org.jlab.kafka.streams.Registrations2Epics");
+    private static final Logger LOGGER = LoggerFactory.getLogger(Registrations2Epics.class);
 
     // TODO: these need to be configurable
     public static final String INPUT_TOPIC = "registered-alarms";
@@ -37,6 +38,8 @@ public final class Registrations2Epics {
     public static final Serde<String> OUTPUT_VALUE_SERDE = INPUT_KEY_SERDE;
 
     static Properties getStreamsConfig() {
+
+        LOGGER.trace("getStreamConfig()");
 
         String bootstrapServers = System.getenv("BOOTSTRAP_SERVERS");
 
@@ -63,6 +66,9 @@ public final class Registrations2Epics {
      * @return The Topology
      */
     static Topology createTopology(Properties props) {
+
+        LOGGER.trace("createTopology()");
+
         final StreamsBuilder builder = new StreamsBuilder();
         Map<String, String> config = new HashMap<>();
         config.put(SCHEMA_REGISTRY_URL_CONFIG, props.getProperty(SCHEMA_REGISTRY_URL_CONFIG));
@@ -172,6 +178,8 @@ public final class Registrations2Epics {
                         result = KeyValue.pair(toJsonKey(channel), toJsonValue(key, value));
                         store.put(key, value);  // Store most recent non-null registration for each CA alarm (key)
                     }
+
+                    LOGGER.trace("Transformed: {}={} -> {}", key, value, result);
 
                     return result;
                 }
