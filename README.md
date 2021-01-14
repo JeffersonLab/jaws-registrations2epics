@@ -4,6 +4,7 @@ A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application t
 ---
  - [Quick Start with Compose](https://github.com/JeffersonLab/registrations2epics#quick-start-with-compose)
  - [Build](https://github.com/JeffersonLab/registrations2epics#build)
+ - [Configure](https://github.com/JeffersonLab/registrations2epics#configure)
  - [Deploy](https://github.com/JeffersonLab/registrations2epics#deploy)
  - [Docker](https://github.com/JeffersonLab/registrations2epics#docker)
  - [See Also](https://github.com/JeffersonLab/registrations2epics#see-also)
@@ -39,6 +40,13 @@ gradlew build
 **Note**: If you do not already have Gradle installed, it will be installed automatically by the wrapper script included in the source
 
 **Note**: Jefferson Lab has an intercepting [proxy](https://gist.github.com/slominskir/92c25a033db93a90184a5994e71d0b78)
+
+## Configure
+Environment Variables
+| Name | Description |
+|---|---|
+| BOOTSTRAP_SERVERS | Host and port pair pointing to a Kafka server to bootstrap the client connection to a Kafka Cluser; example: `kafka:9092` |
+| SCHEMA_REGISTRY | URL to Confluent Schema Registry; example: `http://registry:8081` |
 
 ## Deploy
 The Kafka Streams app is a regular Java application, and start scripts are created and dependencies collected by the Gradle distribution targets:
