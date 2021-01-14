@@ -3,6 +3,7 @@ plugins {
     id 'application'
     id 'distribution'
     id 'com.commercehub.gradle.plugin.avro' version '0.21.0'
+    id 'com.github.jk1.dependency-license-report' version '1.16'
 }
 
 group 'org.jlab.kafka.streams'
@@ -49,4 +50,9 @@ application {
 
 build {
     dependsOn(installDist)
+    dependsOn(generateLicenseReport)
+}
+
+applicationDistribution.from("build/reports/dependency-license") {
+    into "dependency-license"
 }
