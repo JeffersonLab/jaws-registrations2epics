@@ -50,9 +50,18 @@ application {
 
 build {
     dependsOn(installDist)
-    dependsOn(generateLicenseReport)
 }
 
-applicationDistribution.from("build/reports/dependency-license") {
-    into "dependency-license"
+installDist.dependsOn(generateLicenseReport)
+distTar.dependsOn(generateLicenseReport)
+distZip.dependsOn(generateLicenseReport)
+
+distributions {
+    main {
+        contents {
+            from("build/reports/dependency-license") {
+                into "dependency-license"
+            }
+        }
+    }
 }
