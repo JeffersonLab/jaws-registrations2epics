@@ -41,7 +41,15 @@ gradlew build
 **Note**: Jefferson Lab has an intercepting [proxy](https://gist.github.com/slominskir/92c25a033db93a90184a5994e71d0b78)
 
 ## Deploy
-The Kafka Streams app is a regular Java application, and start scripts are created by the Gradle build.  Launch with:
+The Kafka Streams app is a regular Java application, and start scripts are created and dependencies collected by the Gradle distribution targets:
+
+```
+gradlew assembleDist
+```
+
+[Releases](https://github.com/JeffersonLab/registrations2epics/releases)
+
+Launch with:
 
 UNIX:
 ```
