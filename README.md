@@ -29,9 +29,16 @@ docker exec kafka /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:
 ```
 
 ## Build
+This [Java 11](https://adoptopenjdk.net/) project uses the [Gradle 6](https://gradle.org/) build tool to automatically download dependencies and build the project from source:
+
 ```
+git clone https://github.com/JeffersonLab/registrations2epics
+cd registrations2epics
 gradlew build
 ```
+**Note**: If you do not already have Gradle installed, it will be installed automatically by the wrapper script included in the source
+
+**Note**: Jefferson Lab has an intercepting [proxy](https://gist.github.com/slominskir/92c25a033db93a90184a5994e71d0b78)
 
 ## Deploy
 The Kafka Streams app is a regular Java application, and start scripts are created by the Gradle build.  Launch with:
