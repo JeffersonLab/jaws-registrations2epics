@@ -44,7 +44,9 @@ public class Registrations2EpicsTest {
 
     @After
     public void tearDown() {
-        testDriver.close();
+        if(testDriver != null) {
+            testDriver.close();
+        }
     }
 
     @Test
