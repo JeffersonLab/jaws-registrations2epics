@@ -36,7 +36,7 @@ public class Registrations2EpicsTest {
         direct.setPv("channel1");
         alarm1 = new RegisteredAlarm();
         alarm1.setProducer(direct);
-        alarm1.setCategory(AlarmCategory.Magnet);
+        alarm1.setCategory(AlarmCategory.BCM);
         alarm1.setLocation(AlarmLocation.INJ);
         alarm1.setDocurl("/");
         alarm1.setEdmpath("/");
