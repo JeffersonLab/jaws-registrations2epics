@@ -1,0 +1,7 @@
+---
+version: '3.8'
+
+services:
+  registrations2epics:
+    volumes:
+      - ./build/install/registrations2epics:/opt/registrations2epics

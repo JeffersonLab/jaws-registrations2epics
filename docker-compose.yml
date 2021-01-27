@@ -1,5 +1,5 @@
 ---
-version: '2'
+version: '3.8'
 
 services:
   zookeeper:
@@ -46,14 +46,14 @@ services:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
 
-  streams:
+  registrations2epics:
     build:
       context: .
       dockerfile: Dockerfile
       args:
         - CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
-    hostname: streams
-    container_name: streams
+    hostname: registrations2epics
+    container_name: registrations2epics
     depends_on:
       - zookeeper
       - kafka
@@ -62,5 +62,3 @@ services:
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"
-    volumes:
-      - ./build/install/registrations2epics:/opt/registrations2epics
