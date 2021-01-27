@@ -48,6 +48,7 @@ gradlew build
 
 ## Configure
 Environment Variables
+
 | Name | Description |
 |---|---|
 | BOOTSTRAP_SERVERS | Comma-separated list of host and port pairs pointing to a Kafka server to bootstrap the client connection to a Kafka Cluser; example: `kafka:9092` |
