@@ -29,6 +29,11 @@ docker exec -it console /scripts/set-registered.py alarm1 --producerpv channel1 
 docker exec kafka /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic epics-channels --from-beginning --property "print.key=true" --property "key.separator==" 
 ```
 
+**Note**: When developing the app you can mount the build artifact into the container by substituting the `docker-compose up` command with:
+```
+docker-compose -f docker-compose.yml -f docker-compose-dev.yml up
+```
+
 ## Build
 This [Java 11](https://adoptopenjdk.net/) project uses the [Gradle 6](https://gradle.org/) build tool to automatically download dependencies and build the project from source:
 
