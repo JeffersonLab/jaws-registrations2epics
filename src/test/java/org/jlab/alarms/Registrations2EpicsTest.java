@@ -1,10 +1,10 @@
 package org.jlab.alarms;
 
 import org.apache.kafka.streams.*;
-import org.jlab.kafka.alarms.AlarmCategory;
-import org.jlab.kafka.alarms.AlarmLocation;
-import org.jlab.kafka.alarms.DirectCAAlarm;
-import org.jlab.kafka.alarms.RegisteredAlarm;
+import org.jlab.alarms.AlarmCategory;
+import org.jlab.alarms.AlarmLocation;
+import org.jlab.alarms.EPICSProducer;
+import org.jlab.alarms.RegisteredAlarm;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,14 +31,14 @@ public class Registrations2EpicsTest {
         inputTopic = testDriver.createInputTopic(Registrations2Epics.INPUT_TOPIC, Registrations2Epics.INPUT_KEY_SERDE.serializer(), Registrations2Epics.INPUT_VALUE_SERDE.serializer());
         outputTopic = testDriver.createOutputTopic(Registrations2Epics.OUTPUT_TOPIC, Registrations2Epics.OUTPUT_KEY_SERDE.deserializer(), Registrations2Epics.OUTPUT_VALUE_SERDE.deserializer());
 
-        DirectCAAlarm direct = new DirectCAAlarm();
-        direct.setPv("channel1");
+        EPICSProducer producer = new EPICSProducer();
+        producer.setPv("channel1");
         alarm1 = new RegisteredAlarm();
-        alarm1.setProducer(direct);
+        alarm1.setProducer(producer);
         alarm1.setCategory(AlarmCategory.BCM);
         alarm1.setLocation(AlarmLocation.INJ);
         alarm1.setDocurl("/");
-        alarm1.setEdmpath("/");
+        alarm1.setScreenpath("/");
     }
 
     @After
