@@ -1,6 +1,5 @@
-package org.jlab.kafka.streams;
+package org.jlab.alarms;
 
-import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.*;
 import org.jlab.kafka.alarms.AlarmCategory;
 import org.jlab.kafka.alarms.AlarmLocation;

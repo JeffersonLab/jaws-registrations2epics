@@ -7,7 +7,7 @@ plugins {
     id 'org.barfuin.gradle.taskinfo' version '1.0.1'
 }
 
-group 'org.jlab.kafka.streams'
+group 'org.jlab.alarms'
 version '1.1.1'
 
 ext.confluentVer = '6.0.1'
@@ -49,7 +49,7 @@ jar {
 }
 
 application {
-    mainClassName = 'org.jlab.kafka.streams.Registrations2Epics'
+    mainClassName = 'org.jlab.alarms.Registrations2Epics'
 }
 
 build {

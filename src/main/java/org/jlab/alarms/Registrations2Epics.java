@@ -1,4 +1,4 @@
-package org.jlab.kafka.streams;
+package org.jlab.alarms;
 
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
