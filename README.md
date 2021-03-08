@@ -1,5 +1,5 @@
 # registrations2epics [![Java CI with Gradle](https://github.com/JeffersonLab/registrations2epics/workflows/Java%20CI%20with%20Gradle/badge.svg)](https://github.com/JeffersonLab/registrations2epics/actions?query=workflow%3A%22Java+CI+with+Gradle%22) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/slominskir/registrations2epics?sort=semver&label=DockerHub)   ](https://hub.docker.com/r/slominskir/registrations2epics)
-A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application to continuously populate the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) _epics-channels_ topic from the [kafka-alarm-system](https://github.com/JeffersonLab/kafka-alarm-system) _registered-alarms_ topic for the subset of messages containing producer type __EPICSProducer__.  
+A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application to continuously populate the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) _epics-channels_ topic from the [JAWS](https://github.com/JeffersonLab/jaws) _registered-alarms_ topic for the subset of messages containing producer type __EPICSProducer__.  
 
 ---
  - [Quick Start with Compose](https://github.com/JeffersonLab/registrations2epics#quick-start-with-compose)
