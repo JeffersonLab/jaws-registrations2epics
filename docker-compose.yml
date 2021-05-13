@@ -58,7 +58,7 @@ services:
       - zookeeper
       - kafka
       - registry
-      - console
+      - jaws
     environment:
       BOOTSTRAP_SERVERS: "kafka:9092"
       SCHEMA_REGISTRY: "http://registry:8081"

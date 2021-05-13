@@ -49,7 +49,7 @@ jar {
 }
 
 application {
-    mainClassName = 'org.jlab.alarms.Registrations2Epics'
+    mainClassName = 'org.jlab.jaws.Registrations2Epics'
 }
 
 build {
