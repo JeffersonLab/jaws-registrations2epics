@@ -1,10 +1,7 @@
 package org.jlab.alarms;
 
 import org.apache.kafka.streams.*;
-import org.jlab.alarms.AlarmCategory;
-import org.jlab.alarms.AlarmLocation;
-import org.jlab.alarms.EPICSProducer;
-import org.jlab.alarms.RegisteredAlarm;
+import org.jlab.jaws.entity.*;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,9 +32,9 @@ public class Registrations2EpicsTest {
         producer.setPv("channel1");
         alarm1 = new RegisteredAlarm();
         alarm1.setProducer(producer);
+        alarm1.setClass$(AlarmClass.Base_Class);
         alarm1.setCategory(AlarmCategory.BCM);
         alarm1.setLocation(AlarmLocation.INJ);
-        alarm1.setDocurl("/");
         alarm1.setScreenpath("/");
     }
 

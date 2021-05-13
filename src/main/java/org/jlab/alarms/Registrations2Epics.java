@@ -10,8 +10,8 @@ import org.apache.kafka.streams.processor.ProcessorContext;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.StoreBuilder;
 import org.apache.kafka.streams.state.Stores;
-import org.jlab.alarms.EPICSProducer;
-import org.jlab.alarms.RegisteredAlarm;
+import org.jlab.jaws.entity.EPICSProducer;
+import org.jlab.jaws.entity.RegisteredAlarm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -169,7 +169,7 @@ public final class Registrations2Epics {
 
                     if(value == null) { // Tombstone - we need most recent non-null registration to transform
                         RegisteredAlarm previous = store.get(key);
-                        if(previous != null) { // We only store DirectCAAlarm, so no need to check type
+                        if(previous != null) { // We only store EPICSProducer, so no need to check type
                             channel = ((EPICSProducer)previous.getProducer()).getPv();
                             result = KeyValue.pair(toJsonKey(channel), toJsonValue(key, value));
                         }

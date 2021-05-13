@@ -2,7 +2,6 @@ plugins {
     id 'java'
     id 'application'
     id 'distribution'
-    id 'com.commercehub.gradle.plugin.avro' version '0.22.0'
     id 'com.github.jk1.dependency-license-report' version '1.16'
     id 'org.barfuin.gradle.taskinfo' version '1.0.1'
 }
@@ -10,8 +9,8 @@ plugins {
 group 'org.jlab.alarms'
 version '1.2.0'
 
-ext.confluentVer = '6.0.1'
-ext.kafkaVer = '2.6.0'
+ext.confluentVer = '6.0.2'
+ext.kafkaVer = '2.6.2'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -31,8 +30,9 @@ repositories {
 dependencies {
     implementation "org.apache.kafka:kafka-streams:" + kafkaVer,
                 "io.confluent:kafka-streams-avro-serde:" + confluentVer,
-                "org.apache.avro:avro:1.10.1",
-                "org.slf4j:slf4j-log4j12:1.7.30"
+                "org.apache.avro:avro:1.10.2",
+                "org.slf4j:slf4j-log4j12:1.7.30",
+                "org.jlab:jaws-libj:1.1.0"
     testImplementation "org.apache.kafka:kafka-streams-test-utils:" + kafkaVer,
                 "junit:junit:4.13.1"
 }
