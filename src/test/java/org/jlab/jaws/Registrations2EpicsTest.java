@@ -1,4 +1,4 @@
-package org.jlab.alarms;
+package org.jlab.jaws;
 
 import org.apache.kafka.streams.*;
 import org.jlab.jaws.entity.*;
