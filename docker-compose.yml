@@ -34,10 +34,10 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
       SCHEMA_REGISTRY_HOST_NAME: registry
 
-  console:
+  jaws:
     image: slominskir/jaws:2.4.0
-    hostname: console
-    container_name: console
+    hostname: jaws
+    container_name: jaws
     depends_on:
       - zookeeper
       - kafka
