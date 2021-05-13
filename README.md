@@ -22,7 +22,7 @@ docker-compose up
 ```
 3. Register an alarm
 ```
-docker exec -it console /scripts/client/set-registered.py alarm1 --producerpv channel1 --location INJ --category RF --docurl / --screenpath / 
+docker exec -it jaws /scripts/client/set-registered.py alarm1 --producerpv channel1 --location INJ --category RF --screenpath / 
 ```
 4. Verify that the epics-channels command topic received a new channel to monitor 
 ```
