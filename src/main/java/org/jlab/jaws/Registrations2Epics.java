@@ -92,7 +92,7 @@ public final class Registrations2Epics {
     }
 
     private static String toJsonKey(String channel) {
-        return "{\"topic\":\"active-alarms\",\"channel\":\"" + channel + "\"}";
+        return "{\"topic\":\"alarm-activations\",\"channel\":\"" + channel + "\"}";
     }
 
     private static String toJsonValue(String outkey, AlarmRegistration registration) {
