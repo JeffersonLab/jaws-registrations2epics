@@ -64,7 +64,7 @@ public class Registrations2EpicsTest {
     public void regularMsg() {
         inputTopic.pipeInput("alarm1", alarm1);
         KeyValue<String, String> result = outputTopic.readKeyValue();
-        Assert.assertEquals("{\"topic\":\"active-alarms\",\"channel\":\"channel1\"}", result.key);
+        Assert.assertEquals("{\"topic\":\"alarm-activations\",\"channel\":\"channel1\"}", result.key);
         Assert.assertEquals("{\"mask\":\"a\",\"outkey\":\"alarm1\"}", result.value);
     }
 }
