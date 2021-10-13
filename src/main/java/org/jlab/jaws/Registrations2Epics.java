@@ -11,7 +11,7 @@ import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.StoreBuilder;
 import org.apache.kafka.streams.state.Stores;
 import org.jlab.jaws.entity.EPICSProducer;
-import org.jlab.jaws.entity.RegisteredAlarm;
+import org.jlab.jaws.entity.AlarmRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,18 +22,18 @@ import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHE
 
 /**
  * A Kafka Streams application to populate the epics2kafka epics-channels topic from the kafka-alarm-system
- * registered-alarms topic for the subset of messages of type DirectCAAlarm.
+ * alarm-registrations topic for the subset of messages of type EPICSProducer.
  */
 public final class Registrations2Epics {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Registrations2Epics.class);
 
     // TODO: these need to be configurable
-    public static final String INPUT_TOPIC = "registered-alarms";
+    public static final String INPUT_TOPIC = "alarm-registrations";
     public static final String OUTPUT_TOPIC = "epics-channels";
 
     public static final Serde<String> INPUT_KEY_SERDE = Serdes.String();
-    public static final SpecificAvroSerde<RegisteredAlarm> INPUT_VALUE_SERDE = new SpecificAvroSerde<>();
+    public static final SpecificAvroSerde<AlarmRegistration> INPUT_VALUE_SERDE = new SpecificAvroSerde<>();
     public static final Serde<String> OUTPUT_KEY_SERDE = INPUT_KEY_SERDE;
     public static final Serde<String> OUTPUT_VALUE_SERDE = INPUT_KEY_SERDE;
 
@@ -74,7 +74,7 @@ public final class Registrations2Epics {
         config.put(SCHEMA_REGISTRY_URL_CONFIG, props.getProperty(SCHEMA_REGISTRY_URL_CONFIG));
         INPUT_VALUE_SERDE.configure(config, false);
 
-        final StoreBuilder<KeyValueStore<String, RegisteredAlarm>> storeBuilder = Stores.keyValueStoreBuilder(
+        final StoreBuilder<KeyValueStore<String, AlarmRegistration>> storeBuilder = Stores.keyValueStoreBuilder(
                 Stores.persistentKeyValueStore("Registrations2EpicsStore"),
                 INPUT_KEY_SERDE,
                 INPUT_VALUE_SERDE
@@ -82,7 +82,7 @@ public final class Registrations2Epics {
 
         builder.addStateStore(storeBuilder);
 
-        final KStream<String, RegisteredAlarm> input = builder.stream(INPUT_TOPIC, Consumed.with(INPUT_KEY_SERDE, INPUT_VALUE_SERDE));
+        final KStream<String, AlarmRegistration> input = builder.stream(INPUT_TOPIC, Consumed.with(INPUT_KEY_SERDE, INPUT_VALUE_SERDE));
 
         final KStream<String, String> output = input.transform(new MsgTransformerFactory(storeBuilder.name()), storeBuilder.name());
 
@@ -95,7 +95,7 @@ public final class Registrations2Epics {
         return "{\"topic\":\"active-alarms\",\"channel\":\"" + channel + "\"}";
     }
 
-    private static String toJsonValue(String outkey, RegisteredAlarm registration) {
+    private static String toJsonValue(String outkey, AlarmRegistration registration) {
         return registration == null ? null : "{\"mask\":\"a\",\"outkey\":\"" + outkey + "\"}";
     }
 
@@ -130,9 +130,9 @@ public final class Registrations2Epics {
 
     /**
      * Factory to create Kafka Streams Transformer instances; references a stateStore to maintain previous
-     * RegisteredAlarms.
+     * AlarmRegistrations.
      */
-    private static final class MsgTransformerFactory implements TransformerSupplier<String, RegisteredAlarm, KeyValue<String, String>> {
+    private static final class MsgTransformerFactory implements TransformerSupplier<String, AlarmRegistration, KeyValue<String, String>> {
 
         private final String storeName;
 
@@ -151,24 +151,24 @@ public final class Registrations2Epics {
          * @return a new {@link Transformer} instance
          */
         @Override
-        public Transformer<String, RegisteredAlarm, KeyValue<String, String>> get() {
-            return new Transformer<String, RegisteredAlarm, KeyValue<String, String>>() {
-                private KeyValueStore<String, RegisteredAlarm> store;
+        public Transformer<String, AlarmRegistration, KeyValue<String, String>> get() {
+            return new Transformer<String, AlarmRegistration, KeyValue<String, String>>() {
+                private KeyValueStore<String, AlarmRegistration> store;
 
                 @Override
                 @SuppressWarnings("unchecked") // https://cwiki.apache.org/confluence/display/KAFKA/KIP-478+-+Strongly+typed+Processor+API
                 public void init(ProcessorContext context) {
-                    store = (KeyValueStore<String, RegisteredAlarm>) context.getStateStore(storeName);
+                    store = (KeyValueStore<String, AlarmRegistration>) context.getStateStore(storeName);
                 }
 
                 @Override
-                public KeyValue<String, String> transform(String key, RegisteredAlarm value) {
+                public KeyValue<String, String> transform(String key, AlarmRegistration value) {
                     KeyValue<String, String> result = null; // null returned to mean no record - when not of type DirectCAAlarm OR when an unmatched tombstone is encountered
 
                     String channel;
 
                     if(value == null) { // Tombstone - we need most recent non-null registration to transform
-                        RegisteredAlarm previous = store.get(key);
+                        AlarmRegistration previous = store.get(key);
                         if(previous != null) { // We only store EPICSProducer, so no need to check type
                             channel = ((EPICSProducer)previous.getProducer()).getPv();
                             result = KeyValue.pair(toJsonKey(channel), toJsonValue(key, value));

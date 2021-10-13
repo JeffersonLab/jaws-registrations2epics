@@ -13,9 +13,9 @@ import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHE
 
 public class Registrations2EpicsTest {
     private TopologyTestDriver testDriver;
-    private TestInputTopic<String, RegisteredAlarm> inputTopic;
+    private TestInputTopic<String, AlarmRegistration> inputTopic;
     private TestOutputTopic<String, String> outputTopic;
-    private RegisteredAlarm alarm1;
+    private AlarmRegistration alarm1;
 
     @Before
     public void setup() {
@@ -30,9 +30,9 @@ public class Registrations2EpicsTest {
 
         EPICSProducer producer = new EPICSProducer();
         producer.setPv("channel1");
-        alarm1 = new RegisteredAlarm();
+        alarm1 = new AlarmRegistration();
         alarm1.setProducer(producer);
-        alarm1.setClass$(AlarmClass.Base_Class);
+        alarm1.setClass$("base");
         alarm1.setCategory(AlarmCategory.BCM);
         alarm1.setLocation(AlarmLocation.INJ);
         alarm1.setScreenpath("/");
