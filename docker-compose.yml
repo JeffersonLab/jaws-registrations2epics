@@ -47,11 +47,6 @@ services:
       SCHEMA_REGISTRY: "http://registry:8081"
 
   registrations2epics:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
     hostname: registrations2epics
     container_name: registrations2epics
     depends_on:

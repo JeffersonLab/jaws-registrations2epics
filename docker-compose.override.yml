@@ -1,0 +1,6 @@
+---
+version: '3.8'
+
+services:
+  registrations2epics:
+    image: slominskir/registrations2epics:2.0.0
