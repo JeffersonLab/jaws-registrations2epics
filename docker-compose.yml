@@ -19,7 +19,6 @@ services:
       - "9092:9092"
     environment:
       ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      CREATE_TOPICS: 'registered-alarms:1:1:compact,active-alarms:1:1:compact,shelved-alarms:1:1:compact'
 
   registry:
     image: confluentinc/cp-schema-registry:6.0.2
