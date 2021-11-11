@@ -34,7 +34,7 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: registry
 
   jaws:
-    image: slominskir/jaws:2.7.1
+    image: slominskir/jaws:3.2.0
     hostname: jaws
     container_name: jaws
     depends_on:
