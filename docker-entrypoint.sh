@@ -1,12 +1,12 @@
 #!/bin/bash
 
-echo "------------------------------------------------------"
-echo "Step 1: Waiting for Schema Registry to start listening"
-echo "------------------------------------------------------"
+echo "--------------------------------------------------------------------"
+echo "Step 1: Waiting for effective-registrations-value in Schema Registry"
+echo "--------------------------------------------------------------------"
 url=$SCHEMA_REGISTRY
 echo "waiting on: $url"
-while [ $(curl -s -o /dev/null -w %{http_code} $url/subjects) -eq 000 ] ; do
-  echo -e $(date) " Kafka Registry listener HTTP state: " $(curl -s -o /dev/null -w %{http_code} $url/subjects) " (waiting for 200)"
+while [ $(curl -s -o /dev/null -w %{http_code} $url/subjects/effective-registrations-value/versions) -ne 200 ] ; do
+  echo -e $(date) " Kafka Registry listener HTTP state: " $(curl -s -o /dev/null -w %{http_code} $url/subjects/effective-registrations-value/versions) " (waiting for 200)"
   sleep 5
 done
 
