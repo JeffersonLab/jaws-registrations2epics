@@ -7,15 +7,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Properties;
 
 import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG;
 
 public class Registrations2EpicsTest {
     private TopologyTestDriver testDriver;
-    private TestInputTopic<String, AlarmRegistration> inputTopic;
+    private TestInputTopic<String, EffectiveRegistration> inputTopic;
     private TestOutputTopic<String, String> outputTopic;
-    private AlarmRegistration alarm1;
+    private EffectiveRegistration alarm1;
 
     @Before
     public void setup() {
@@ -30,12 +31,16 @@ public class Registrations2EpicsTest {
 
         EPICSProducer producer = new EPICSProducer();
         producer.setPv("channel1");
-        alarm1 = new AlarmRegistration();
-        alarm1.setProducer(producer);
-        alarm1.setClass$("base");
-        alarm1.setCategory(AlarmCategory.BCM);
-        alarm1.setLocation(AlarmLocation.INJ);
-        alarm1.setScreenpath("/");
+
+        AlarmInstance instance = new AlarmInstance();
+
+        alarm1 = new EffectiveRegistration();
+        alarm1.setInstance(instance);
+
+        instance.setProducer(producer);
+        instance.setClass$("base");
+        instance.setLocation(Arrays.asList("INJ"));
+        instance.setScreencommand("/");
     }
 
     @After
