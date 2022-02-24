@@ -14,7 +14,7 @@ ext.kafkaVer = '2.6.2'
 compileJava {
     options.release = 8
     options.encoding = 'UTF-8'
-    options.compilerArgs += ["-Xlint:unchecked"]
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
 }
 
 repositories {
