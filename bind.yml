@@ -1,0 +1,27 @@
+services:
+  zookeeper:
+    extends:
+      file: build.yml
+      service: zookeeper
+
+  kafka:
+    extends:
+      file: build.yml
+      service: kafka
+
+  registry:
+    extends:
+      file: build.yml
+      service: registry
+
+  jaws:
+    extends:
+      file: build.yml
+      service: jaws
+
+  registrations2epics:
+    extends:
+      file: build.yml
+      service: registrations2epics
+    volumes:
+      - ./build/install/registrations2epics:/opt/registrations2epics

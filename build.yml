@@ -1,0 +1,30 @@
+services:
+  zookeeper:
+    extends:
+      file: docker-compose.yml
+      service: zookeeper
+
+  kafka:
+    extends:
+      file: docker-compose.yml
+      service: kafka
+
+  registry:
+    extends:
+      file: docker-compose.yml
+      service: registry
+
+  jaws:
+    extends:
+      file: docker-compose.yml
+      service: jaws
+
+  registrations2epics:
+    extends:
+      file: docker-compose.yml
+      service: registrations2epics
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
