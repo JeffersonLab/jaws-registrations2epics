@@ -11,7 +11,7 @@ import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.StoreBuilder;
 import org.apache.kafka.streams.state.Stores;
 import org.jlab.jaws.entity.EPICSProducer;
-import org.jlab.jaws.entity.EffectiveRegistration;
+import org.jlab.jaws.entity.AlarmInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,11 +29,11 @@ public final class Registrations2Epics {
     private static final Logger LOGGER = LoggerFactory.getLogger(Registrations2Epics.class);
 
     // TODO: these need to be configurable
-    public static final String INPUT_TOPIC = "effective-registrations";
+    public static final String INPUT_TOPIC = "alarm-instances";
     public static final String OUTPUT_TOPIC = "epics-channels";
 
     public static final Serde<String> INPUT_KEY_SERDE = Serdes.String();
-    public static final SpecificAvroSerde<EffectiveRegistration> INPUT_VALUE_SERDE = new SpecificAvroSerde<>();
+    public static final SpecificAvroSerde<AlarmInstance> INPUT_VALUE_SERDE = new SpecificAvroSerde<>();
     public static final Serde<String> OUTPUT_KEY_SERDE = INPUT_KEY_SERDE;
     public static final Serde<String> OUTPUT_VALUE_SERDE = INPUT_KEY_SERDE;
 
@@ -74,7 +74,7 @@ public final class Registrations2Epics {
         config.put(SCHEMA_REGISTRY_URL_CONFIG, props.getProperty(SCHEMA_REGISTRY_URL_CONFIG));
         INPUT_VALUE_SERDE.configure(config, false);
 
-        final StoreBuilder<KeyValueStore<String, EffectiveRegistration>> storeBuilder = Stores.keyValueStoreBuilder(
+        final StoreBuilder<KeyValueStore<String, AlarmInstance>> storeBuilder = Stores.keyValueStoreBuilder(
                 Stores.persistentKeyValueStore("Registrations2EpicsStore"),
                 INPUT_KEY_SERDE,
                 INPUT_VALUE_SERDE
@@ -82,7 +82,7 @@ public final class Registrations2Epics {
 
         builder.addStateStore(storeBuilder);
 
-        final KStream<String, EffectiveRegistration> input = builder.stream(INPUT_TOPIC, Consumed.with(INPUT_KEY_SERDE, INPUT_VALUE_SERDE));
+        final KStream<String, AlarmInstance> input = builder.stream(INPUT_TOPIC, Consumed.with(INPUT_KEY_SERDE, INPUT_VALUE_SERDE));
 
         final KStream<String, String> output = input.transform(new MsgTransformerFactory(storeBuilder.name()), storeBuilder.name());
 
@@ -95,7 +95,7 @@ public final class Registrations2Epics {
         return "{\"topic\":\"alarm-activations\",\"channel\":\"" + channel + "\"}";
     }
 
-    private static String toJsonValue(String outkey, EffectiveRegistration registration) {
+    private static String toJsonValue(String outkey, AlarmInstance registration) {
         return registration == null ? null : "{\"mask\":\"a\",\"outkey\":\"" + outkey + "\"}";
     }
 
@@ -130,9 +130,9 @@ public final class Registrations2Epics {
 
     /**
      * Factory to create Kafka Streams Transformer instances; references a stateStore to maintain previous
-     * EffectiveRegistrations.
+     * AlarmInstances.
      */
-    private static final class MsgTransformerFactory implements TransformerSupplier<String, EffectiveRegistration, KeyValue<String, String>> {
+    private static final class MsgTransformerFactory implements TransformerSupplier<String, AlarmInstance, KeyValue<String, String>> {
 
         private final String storeName;
 
@@ -151,30 +151,30 @@ public final class Registrations2Epics {
          * @return a new {@link Transformer} instance
          */
         @Override
-        public Transformer<String, EffectiveRegistration, KeyValue<String, String>> get() {
-            return new Transformer<String, EffectiveRegistration, KeyValue<String, String>>() {
-                private KeyValueStore<String, EffectiveRegistration> store;
+        public Transformer<String, AlarmInstance, KeyValue<String, String>> get() {
+            return new Transformer<String, AlarmInstance, KeyValue<String, String>>() {
+                private KeyValueStore<String, AlarmInstance> store;
 
                 @Override
                 @SuppressWarnings("unchecked") // https://cwiki.apache.org/confluence/display/KAFKA/KIP-478+-+Strongly+typed+Processor+API
                 public void init(ProcessorContext context) {
-                    store = (KeyValueStore<String, EffectiveRegistration>) context.getStateStore(storeName);
+                    store = (KeyValueStore<String, AlarmInstance>) context.getStateStore(storeName);
                 }
 
                 @Override
-                public KeyValue<String, String> transform(String key, EffectiveRegistration value) {
+                public KeyValue<String, String> transform(String key, AlarmInstance value) {
                     KeyValue<String, String> result = null; // null returned to mean no record - when not of type DirectCAAlarm OR when an unmatched tombstone is encountered
 
                     String channel;
 
                     if(value == null) { // Tombstone - we need most recent non-null registration to transform
-                        EffectiveRegistration previous = store.get(key);
+                        AlarmInstance previous = store.get(key);
                         if(previous != null) { // We only store EPICSProducer, so no need to check type
-                            channel = ((EPICSProducer)previous.getInstance().getProducer()).getPv();
+                            channel = ((EPICSProducer)previous.getProducer()).getPv();
                             result = KeyValue.pair(toJsonKey(channel), toJsonValue(key, value));
                         }
-                    } else if(value.getInstance().getProducer() instanceof EPICSProducer) {
-                        channel = ((EPICSProducer) value.getInstance().getProducer()).getPv();
+                    } else if(value.getProducer() instanceof EPICSProducer) {
+                        channel = ((EPICSProducer) value.getProducer()).getPv();
                         result = KeyValue.pair(toJsonKey(channel), toJsonValue(key, value));
                         store.put(key, value);  // Store most recent non-null registration for each CA alarm (key)
                     }

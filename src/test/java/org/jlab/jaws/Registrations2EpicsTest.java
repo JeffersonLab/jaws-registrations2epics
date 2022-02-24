@@ -14,9 +14,9 @@ import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.SCHE
 
 public class Registrations2EpicsTest {
     private TopologyTestDriver testDriver;
-    private TestInputTopic<String, EffectiveRegistration> inputTopic;
+    private TestInputTopic<String, AlarmInstance> inputTopic;
     private TestOutputTopic<String, String> outputTopic;
-    private EffectiveRegistration alarm1;
+    private AlarmInstance instance = new AlarmInstance();
 
     @Before
     public void setup() {
@@ -31,11 +31,6 @@ public class Registrations2EpicsTest {
 
         EPICSProducer producer = new EPICSProducer();
         producer.setPv("channel1");
-
-        AlarmInstance instance = new AlarmInstance();
-
-        alarm1 = new EffectiveRegistration();
-        alarm1.setInstance(instance);
 
         instance.setProducer(producer);
         instance.setClass$("base");
@@ -52,7 +47,7 @@ public class Registrations2EpicsTest {
 
     @Test
     public void matchedTombstoneMsg() {
-        inputTopic.pipeInput("alarm1", alarm1);
+        inputTopic.pipeInput("alarm1", instance);
         inputTopic.pipeInput("alarm1", null);
         KeyValue<String, String> result = outputTopic.readKeyValuesToList().get(1);
         Assert.assertNull(result.value);
@@ -67,7 +62,7 @@ public class Registrations2EpicsTest {
 
     @Test
     public void regularMsg() {
-        inputTopic.pipeInput("alarm1", alarm1);
+        inputTopic.pipeInput("alarm1", instance);
         KeyValue<String, String> result = outputTopic.readKeyValue();
         Assert.assertEquals("{\"topic\":\"alarm-activations\",\"channel\":\"channel1\"}", result.key);
         Assert.assertEquals("{\"mask\":\"a\",\"outkey\":\"alarm1\"}", result.value);
