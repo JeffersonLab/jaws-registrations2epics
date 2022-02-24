@@ -37,10 +37,7 @@ docker exec -it jaws /scripts/client/set-registration.py alarm1 --producerpv cha
 docker exec kafka /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic epics-channels --from-beginning --property "print.key=true" --property "key.separator==" 
 ```
 
-**Note**: When developing the app you can mount the build artifact into the container by substituting the `docker-compose up` command with:
-```
-docker-compose -f docker-compose.yml -f docker-compose-dev.yml up
-```
+**See**: [Docker Compose Strategy](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c)
 
 ### Install
 The Kafka Streams app is a regular Java application, and start scripts are created and dependencies collected by the Gradle distribution targets:
@@ -71,7 +68,7 @@ Environment Variables
 | SCHEMA_REGISTRY | URL to Confluent Schema Registry; example: `http://registry:8081` |
 
 ## Build
-This [Java 17](https://adoptopenjdk.net/) project uses the [Gradle 7](https://gradle.org/) build tool to automatically download dependencies and build the project from source:
+This [Java 17](https://adoptium.net/) project uses the [Gradle 7](https://gradle.org/) build tool to automatically download dependencies and build the project from source:
 
 ```
 git clone https://github.com/JeffersonLab/registrations2epics
