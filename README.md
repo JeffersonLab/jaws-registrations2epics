@@ -1,5 +1,5 @@
 # registrations2epics [![Java CI with Gradle](https://github.com/JeffersonLab/registrations2epics/workflows/Java%20CI%20with%20Gradle/badge.svg)](https://github.com/JeffersonLab/registrations2epics/actions?query=workflow%3A%22Java+CI+with+Gradle%22) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/slominskir/registrations2epics?sort=semver&label=DockerHub)   ](https://hub.docker.com/r/slominskir/registrations2epics)
-A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application to continuously populate the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) _epics-channels_ topic from the [JAWS](https://github.com/JeffersonLab/jaws) _alarm-registrations_ topic for the subset of messages containing producer type __EPICSProducer__.  
+A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application to continuously populate the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) _epics-channels_ topic from the [JAWS](https://github.com/JeffersonLab/jaws) _alarm-instances_ topic for the subset of messages containing producer type __EPICSProducer__.  
 
 ---
  - [Overview](https://github.com/JeffersonLab/registrations2epics#overview)
@@ -12,9 +12,9 @@ A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application t
  ---
 
 ## Overview
-This app keeps epics2kafka automatically configured based on the JAWS configuration.  This Kafka Streams app consumes the `effective-registrations` topic and filters out registration messages related to EPICS and for each of those produces a command message to epics2kafka via the `epics-channels` topic.   
+This app keeps epics2kafka automatically configured based on the JAWS configuration.  This Kafka Streams app consumes the `alarm-instances` topic and filters out registration messages related to EPICS and for each of those produces a command message to epics2kafka via the `epics-channels` topic.   
 
-When a JAWS registration is removed it is removed via a tombstone message, which is a null value for a given key.  This presents a challenge as a registration removal does not have a value payload to indicate whether it is an EPICS registration or what is the PV/channel name.  The epics2kafka epics-channels topic key contains a PV/channel whereas the JAWS effective-registrations key is an alarm name.   To overcome this challenge this app is not stateless, it uses a Kafka Streams store to track all JAWS registration records that have been used to command epics2kafka.  This way the registration record key, the alarm name, can be used in the tombstone case to lookup if the tombstone means action is needed.
+When a JAWS registration is removed it is removed via a tombstone message, which is a null value for a given key.  This presents a challenge as a registration removal does not have a value payload to indicate whether it is an EPICS registration or what is the PV/channel name.  The epics2kafka epics-channels topic key contains a PV/channel whereas the JAWS alarm-instances key is an alarm name.   To overcome this challenge this app is not stateless, it uses a Kafka Streams store to track all JAWS registration records that have been used to command epics2kafka.  This way the registration record key, the alarm name, can be used in the tombstone case to lookup if the tombstone means action is needed.
 
 ## Usage
 
