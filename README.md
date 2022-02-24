@@ -12,7 +12,7 @@ A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application t
  ---
 
 ## Overview
-This app keeps epics2kafka automatically configured based on the JAWS configuration.  This Kafka Streams app consumes the `alarm-instances` topic and filters out registration messages related to EPICS and for each of those produces a command message to epics2kafka via the `epics-channels` topic.   
+This app keeps epics2kafka automatically configured based on the JAWS configuration.  This Kafka Streams app consumes the `alarm-instances` topic and looks for registration messages related to EPICS and for each of those produces a command message to epics2kafka via the `epics-channels` topic.   
 
 When a JAWS registration is removed it is removed via a tombstone message, which is a null value for a given key.  This presents a challenge as a registration removal does not have a value payload to indicate whether it is an EPICS registration or what is the PV/channel name.  The epics2kafka epics-channels topic key contains a PV/channel whereas the JAWS alarm-instances key is an alarm name.   To overcome this challenge this app is not stateless, it uses a Kafka Streams store to track all JAWS registration records that have been used to command epics2kafka.  This way the registration record key, the alarm name, can be used in the tombstone case to lookup if the tombstone means action is needed.
 
