@@ -2,8 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'distribution'
-    id 'com.github.jk1.dependency-license-report' version '1.16'
-    id 'org.barfuin.gradle.taskinfo' version '1.0.1'
+    id 'com.github.jk1.dependency-license-report' version '2.0'
 }
 
 group 'org.jlab'
@@ -12,10 +11,9 @@ version '2.2.0'
 ext.confluentVer = '6.0.2'
 ext.kafkaVer = '2.6.2'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-tasks.withType(JavaCompile) {
+compileJava {
+    options.release = 8
+    options.encoding = 'UTF-8'
     options.compilerArgs += ["-Xlint:unchecked"]
 }
 
