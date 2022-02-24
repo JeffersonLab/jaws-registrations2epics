@@ -40,13 +40,13 @@ docker exec kafka /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:
 **See**: [Docker Compose Strategy](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c)
 
 ### Install
+Download from [Releases](https://github.com/JeffersonLab/registrations2epics/releases) or build yourself.
+
 The Kafka Streams app is a regular Java application, and start scripts are created and dependencies collected by the Gradle distribution targets:
 
 ```
 gradlew assembleDist
 ```
-
-[Releases](https://github.com/JeffersonLab/registrations2epics/releases)
 
 Launch with:
 
