@@ -65,7 +65,7 @@ Environment Variables
 | SCHEMA_REGISTRY | URL to Confluent Schema Registry; example: `http://registry:8081` |
 
 ## Build
-This [Java 17](https://adoptium.net/) project uses the [Gradle 7](https://gradle.org/) build tool to automatically download dependencies and build the project from source:
+This [Java 17](https://adoptium.net/) project (compiled to Java 8 bytecode) uses the [Gradle 7](https://gradle.org/) build tool to automatically download dependencies and build the project from source:
 
 ```
 git clone https://github.com/JeffersonLab/registrations2epics
