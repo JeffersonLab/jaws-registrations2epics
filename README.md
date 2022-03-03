@@ -3,9 +3,8 @@ A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application t
 
 ---
  - [Overview](https://github.com/JeffersonLab/registrations2epics#overview)
- - [Usage](https://github.com/JeffersonLab/registrations2epics#usage) 
-   - [Quick Start with Compose](https://github.com/JeffersonLab/registrations2epics#quick-start-with-compose)
-   - [Install](https://github.com/JeffersonLab/registrations2epics#install)
+ - [Quick Start with Compose](https://github.com/JeffersonLab/registrations2epics#quick-start-with-compose)
+ - [Install](https://github.com/JeffersonLab/registrations2epics#install)
  - [Configure](https://github.com/JeffersonLab/registrations2epics#configure)
  - [Build](https://github.com/JeffersonLab/registrations2epics#build) 
  - [See Also](https://github.com/JeffersonLab/registrations2epics#see-also)
@@ -16,9 +15,7 @@ This app keeps epics2kafka automatically configured based on the JAWS configurat
 
 When a JAWS registration is removed it is removed via a tombstone message, which is a null value for a given key.  This presents a challenge as a registration removal does not have a value payload to indicate whether it is an EPICS registration or what is the PV/channel name.  The epics2kafka epics-channels topic key contains a PV/channel whereas the JAWS alarm-instances key is an alarm name.   To overcome this challenge this app is not stateless, it uses a Kafka Streams store to track all JAWS registration records that have been used to command epics2kafka.  This way the registration record key, the alarm name, can be used in the tombstone case to lookup if the tombstone means action is needed.
 
-## Usage
-
-### Quick Start with Compose 
+## Quick Start with Compose 
 1. Grab project
 ```
 git clone https://github.com/JeffersonLab/registrations2epics
@@ -39,7 +36,7 @@ docker exec kafka /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:
 
 **See**: [Docker Compose Strategy](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c)
 
-### Install
+## Install
 Download from [Releases](https://github.com/JeffersonLab/registrations2epics/releases) or build yourself.
 
 The Kafka Streams app is a regular Java application, and start scripts are created and dependencies collected by the Gradle distribution targets:
