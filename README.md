@@ -37,10 +37,11 @@ docker exec kafka /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:
 **See**: [Docker Compose Strategy](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c)
 
 ## Install
-Download from [Releases](https://github.com/JeffersonLab/registrations2epics/releases) or build yourself.
+This application requires a Java 8+ JVM and standard library to run.
 
-The Kafka Streams app is a regular Java application, and start scripts are created and dependencies collected by the Gradle distribution targets:
+Download from [Releases](https://github.com/JeffersonLab/registrations2epics/releases) or [build](https://github.com/JeffersonLab/registrations2epics#build) yourself.
 
+Start scripts are created and dependencies collected by the Gradle distribution target:
 ```
 gradlew assembleDist
 ```
@@ -65,7 +66,7 @@ Environment Variables
 | SCHEMA_REGISTRY | URL to Confluent Schema Registry; example: `http://registry:8081` |
 
 ## Build
-This [Java 17](https://adoptium.net/) project (compiled to Java 8 bytecode) uses the [Gradle 7](https://gradle.org/) build tool to automatically download dependencies and build the project from source:
+This project is built with [Java 17](https://adoptium.net/) (compiled to Java 8 bytecode), and uses the [Gradle 7](https://gradle.org/) build tool to automatically download dependencies and build the project from source:
 
 ```
 git clone https://github.com/JeffersonLab/registrations2epics
