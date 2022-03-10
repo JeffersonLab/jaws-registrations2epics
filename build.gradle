@@ -8,8 +8,8 @@ plugins {
 group 'org.jlab'
 version '2.3.0'
 
-ext.confluentVer = '6.0.2'
-ext.kafkaVer = '2.6.2'
+ext.confluentVer = '7.0.1'
+ext.kafkaVer = '3.0.0'
 
 tasks.withType(JavaCompile) {
     options.release = 8
