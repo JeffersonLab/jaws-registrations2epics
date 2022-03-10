@@ -12,7 +12,7 @@ ext.confluentVer = '7.0.1'
 ext.kafkaVer = '3.0.0'
 
 tasks.withType(JavaCompile) {
-    options.release = 8
+    options.release = 11
     options.encoding = 'UTF-8'
     options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
 }
