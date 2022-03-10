@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 echo "--------------------------------------------------------------------"
 echo "Step 1: Waiting for alarm-instances-value in Schema Registry"
@@ -10,4 +10,7 @@ while [ $(curl -s -o /dev/null -w %{http_code} $url/subjects/alarm-instances-val
   sleep 5
 done
 
-/opt/registrations2epics/bin/registrations2epics
+export REGISTRATIONS2EPICS_OPTS=-Dlog.dir=/opt/registrations2epics/logs
+/opt/registrations2epics/bin/registrations2epics &
+
+sleep infinity
