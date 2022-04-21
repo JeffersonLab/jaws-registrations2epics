@@ -29,10 +29,10 @@ dependencies {
     implementation "org.apache.kafka:kafka-streams:" + kafkaVer,
                 "io.confluent:kafka-streams-avro-serde:" + confluentVer,
                 "org.apache.avro:avro:1.10.2",
-                "org.slf4j:slf4j-log4j12:1.7.30",
-                "org.jlab:jaws-libj:1.9.0"
+                "org.slf4j:slf4j-log4j12:1.7.36",
+                "org.jlab:jaws-libj:4.0.0"
     testImplementation "org.apache.kafka:kafka-streams-test-utils:" + kafkaVer,
-                "junit:junit:4.13.1"
+                "junit:junit:4.13.2"
 }
 
 test {
