@@ -25,13 +25,13 @@ cd registrations2epics
 ```
 docker compose up
 ```
-3. Register an alarm
-```
-docker exec -it jaws /scripts/client/set_instance.py alarm1 --producerpv channel1 
-```
-4. Verify that the epics-channels command topic received a new channel to monitor 
+3. Monitor the epics-channels command topic for updated channels to monitor 
 ```
 docker exec kafka /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic epics-channels --from-beginning --property "print.key=true" --property "key.separator==" 
+```
+4. Register an alarm
+```
+docker exec -it jaws /scripts/client/set_instance.py alarm1 --producerpv channel1 
 ```
 
 **See**: [Docker Compose Strategy](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c)
