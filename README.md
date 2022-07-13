@@ -1,5 +1,5 @@
 # registrations2epics [![CI](https://github.com/JeffersonLab/registrations2epics/actions/workflows/ci.yml/badge.svg)](https://github.com/JeffersonLab/registrations2epics/actions/workflows/ci.yml) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/slominskir/registrations2epics?sort=semver&label=DockerHub)   ](https://hub.docker.com/r/slominskir/registrations2epics)
-A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application to continuously populate the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) _epics-channels_ topic from the [JAWS](https://github.com/JeffersonLab/jaws) _alarm-instances_ topic for the subset of messages containing producer type __EPICSProducer__.  
+A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application to continuously populate the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) _epics-channels_ topic from the [JAWS](https://github.com/JeffersonLab/jaws) _alarm-instances_ topic for the subset of messages containing source type __EPICSSource__.  
 
 ---
  - [Overview](https://github.com/JeffersonLab/registrations2epics#overview)
@@ -31,7 +31,7 @@ docker exec kafka /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:
 ```
 4. Register an alarm
 ```
-docker exec -it jaws /scripts/client/set_instance.py alarm1 --producerpv channel1 
+docker exec -it jaws /scripts/client/set_instance.py alarm1 --pv channel1 
 ```
 
 **See**: [Docker Compose Strategy](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c)
