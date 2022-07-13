@@ -29,11 +29,11 @@ public class Registrations2EpicsTest {
         inputTopic = testDriver.createInputTopic(Registrations2Epics.INPUT_TOPIC, Registrations2Epics.INPUT_KEY_SERDE.serializer(), Registrations2Epics.INPUT_VALUE_SERDE.serializer());
         outputTopic = testDriver.createOutputTopic(Registrations2Epics.OUTPUT_TOPIC, Registrations2Epics.OUTPUT_KEY_SERDE.deserializer(), Registrations2Epics.OUTPUT_VALUE_SERDE.deserializer());
 
-        EPICSProducer producer = new EPICSProducer();
-        producer.setPv("channel1");
+        EPICSSource source = new EPICSSource();
+        source.setPv("channel1");
 
-        instance.setProducer(producer);
-        instance.setClass$("base");
+        instance.setSource(source);
+        instance.setAlarmclass("base");
         instance.setLocation(Arrays.asList("INJ"));
         instance.setScreencommand("/");
     }

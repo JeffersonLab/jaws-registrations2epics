@@ -10,7 +10,7 @@ import org.apache.kafka.streams.processor.ProcessorContext;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.StoreBuilder;
 import org.apache.kafka.streams.state.Stores;
-import org.jlab.jaws.entity.EPICSProducer;
+import org.jlab.jaws.entity.EPICSSource;
 import org.jlab.jaws.entity.AlarmInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -170,11 +170,11 @@ public final class Registrations2Epics {
                     if(value == null) { // Tombstone - we need most recent non-null registration to transform
                         AlarmInstance previous = store.get(key);
                         if(previous != null) { // We only store EPICSProducer, so no need to check type
-                            channel = ((EPICSProducer)previous.getProducer()).getPv();
+                            channel = ((EPICSSource)previous.getSource()).getPv();
                             result = KeyValue.pair(toJsonKey(channel), toJsonValue(key, value));
                         }
-                    } else if(value.getProducer() instanceof EPICSProducer) {
-                        channel = ((EPICSProducer) value.getProducer()).getPv();
+                    } else if(value.getSource() instanceof EPICSSource) {
+                        channel = ((EPICSSource) value.getSource()).getPv();
                         result = KeyValue.pair(toJsonKey(channel), toJsonValue(key, value));
                         store.put(key, value);  // Store most recent non-null registration for each CA alarm (key)
                     }
