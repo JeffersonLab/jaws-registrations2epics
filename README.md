@@ -84,6 +84,7 @@ gradlew build
 1. Bump the version number in build.gradle and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).
 2. Create a new release on the GitHub Releases page corresponding to the same version in the build.gradle.   The release should enumerate changes and link issues.   A zip artifact generated from the gradle distZip target can be attached to the release to facilitate easy install by users.
 3. Build and publish a new Docker image [from the GitHub tag](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c#8-build-an-image-based-of-github-tag).
+4. Bump and commit quick start [image version](https://github.com/JeffersonLab/registrations2epics/blob/main/docker-compose.override.yml)
 
 ## See Also
    - [Developer Notes](https://github.com/JeffersonLab/registrations2epics/wiki/Developer-Notes)
