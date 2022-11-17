@@ -22,7 +22,7 @@ When a JAWS registration is removed it is removed via a tombstone message, which
 git clone https://github.com/JeffersonLab/registrations2epics
 cd registrations2epics
 ```
-2. Launch Docker
+2. Launch [Compose](https://github.com/docker/compose)
 ```
 docker compose up
 ```
