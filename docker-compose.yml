@@ -1,9 +1,4 @@
 services:
-  zookeeper:
-    extends:
-      file: deps.yml
-      service: zookeeper
-
   kafka:
     extends:
       file: deps.yml
@@ -23,7 +18,6 @@ services:
     hostname: registrations2epics
     container_name: registrations2epics
     depends_on:
-      - zookeeper
       - kafka
       - registry
       - jaws
