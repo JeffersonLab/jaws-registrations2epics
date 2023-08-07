@@ -1,5 +1,6 @@
 ARG BUILD_IMAGE=gradle:7.4-jdk17-alpine
 ARG RUN_IMAGE=eclipse-temurin:11-alpine
+ARG CUSTOM_CRT_URL=http://pki.jlab.org/JLabCA.crt
 
 ################## Stage 0
 FROM ${BUILD_IMAGE} as builder
@@ -23,6 +24,15 @@ ARG APP_HOME=/opt/registrations2epics
 USER root
 COPY --from=builder /app/docker-entrypoint.sh /docker-entrypoint.sh
 COPY --from=builder /app/build/install /opt
+## Allow JLab intercepting proxy to intercept with it's legacy renegotiation and custom cert else onsite builds fail
+RUN sed -i 's/providers = provider_sect/providers = provider_sect\n\
+ssl_conf = ssl_sect\n\
+\n\
+[ssl_sect]\n\
+system_default = system_default_sect\n\
+\n\
+[system_default_sect]\n\
+Options = UnsafeLegacyRenegotiation/' /etc/ssl/openssl.cnf
 RUN if [ -z "${CUSTOM_CRT_URL}" ] ; then echo "No custom cert needed"; else \
        mkdir -p /usr/local/share/ca-certificates \
        && wget -O /usr/local/share/ca-certificates/customcert.crt $CUSTOM_CRT_URL \
