@@ -2,11 +2,15 @@ package org.jlab.jaws;
 
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.*;
 import org.apache.kafka.streams.kstream.*;
-import org.apache.kafka.streams.processor.ProcessorContext;
+import org.apache.kafka.streams.processor.api.ProcessorContext;
+import org.apache.kafka.streams.processor.api.Processor;
+import org.apache.kafka.streams.processor.api.ProcessorSupplier;
+import org.apache.kafka.streams.processor.api.Record;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.StoreBuilder;
 import org.apache.kafka.streams.state.Stores;
@@ -15,6 +19,9 @@ import org.jlab.jaws.entity.AlarmInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
@@ -84,7 +91,7 @@ public final class Registrations2Epics {
 
         final KStream<String, AlarmInstance> input = builder.stream(INPUT_TOPIC, Consumed.with(INPUT_KEY_SERDE, INPUT_VALUE_SERDE));
 
-        final KStream<String, String> output = input.transform(new MsgTransformerFactory(storeBuilder.name()), storeBuilder.name());
+        final KStream<String, String> output = input.process(new MyProcessorSupplier(storeBuilder.name()), storeBuilder.name());
 
         output.to(OUTPUT_TOPIC, Produced.with(OUTPUT_KEY_SERDE, OUTPUT_VALUE_SERDE));
 
@@ -132,7 +139,7 @@ public final class Registrations2Epics {
      * Factory to create Kafka Streams Transformer instances; references a stateStore to maintain previous
      * AlarmInstances.
      */
-    private static final class MsgTransformerFactory implements TransformerSupplier<String, AlarmInstance, KeyValue<String, String>> {
+    private static final class MyProcessorSupplier implements ProcessorSupplier<String, AlarmInstance, String, String> {
 
         private final String storeName;
 
@@ -141,7 +148,7 @@ public final class Registrations2Epics {
          *
          * @param storeName The state store name
          */
-        public MsgTransformerFactory(String storeName) {
+        public MyProcessorSupplier(String storeName) {
             this.storeName = storeName;
         }
 
@@ -151,37 +158,44 @@ public final class Registrations2Epics {
          * @return a new {@link Transformer} instance
          */
         @Override
-        public Transformer<String, AlarmInstance, KeyValue<String, String>> get() {
-            return new Transformer<String, AlarmInstance, KeyValue<String, String>>() {
+        public Processor<String, AlarmInstance, String, String> get() {
+            return new Processor<String, AlarmInstance, String, String>() {
+                private ProcessorContext<String, String> context;
                 private KeyValueStore<String, AlarmInstance> store;
 
                 @Override
-                @SuppressWarnings("unchecked") // https://cwiki.apache.org/confluence/display/KAFKA/KIP-478+-+Strongly+typed+Processor+API
-                public void init(ProcessorContext context) {
-                    store = (KeyValueStore<String, AlarmInstance>) context.getStateStore(storeName);
+                public void init(ProcessorContext<String, String> context) {
+                    this.context = context;
+                    this.store = context.getStateStore(storeName);
                 }
 
                 @Override
-                public KeyValue<String, String> transform(String key, AlarmInstance value) {
-                    KeyValue<String, String> result = null; // null returned to mean no record - when not of type DirectCAAlarm OR when an unmatched tombstone is encountered
+                public void process(Record<String, AlarmInstance> input) {
+                    Record<String, String> output = null; // null returned to mean no record - when not of type DirectCAAlarm OR when an unmatched tombstone is encountered
+
+                    long timestamp = System.currentTimeMillis();
 
                     String channel;
 
-                    if(value == null) { // Tombstone - we need most recent non-null registration to transform
-                        AlarmInstance previous = store.get(key);
+                    if(input.value() == null) { // Tombstone - we need most recent non-null registration to transform
+                        AlarmInstance previous = store.get(input.key());
                         if(previous != null) { // We only store EPICSProducer, so no need to check type
                             channel = ((EPICSSource)previous.getSource()).getPv();
-                            result = KeyValue.pair(toJsonKey(channel), toJsonValue(key, value));
+                            output = new Record<>(toJsonKey(channel), toJsonValue(input.key(), input.value()), timestamp);
+                            populateHeaders(output);
                         }
-                    } else if(value.getSource() instanceof EPICSSource) {
-                        channel = ((EPICSSource) value.getSource()).getPv();
-                        result = KeyValue.pair(toJsonKey(channel), toJsonValue(key, value));
-                        store.put(key, value);  // Store most recent non-null registration for each CA alarm (key)
+                    } else if(input.value().getSource() instanceof EPICSSource) {
+                        channel = ((EPICSSource) input.value().getSource()).getPv();
+                        output = new Record<>(toJsonKey(channel), toJsonValue(input.key(), input.value()), timestamp);
+                        populateHeaders(output);
+                        store.put(input.key(), input.value());  // Store most recent non-null registration for each CA alarm (key)
                     }
 
-                    LOGGER.trace("Transformed: {}={} -> {}", key, value, result);
+                    LOGGER.trace("Transformed: {}={} -> {}", input.key(), input.value(), output);
 
-                    return result;
+                    if(output != null) {
+                        context.forward(output);
+                    }
                 }
 
                 @Override
@@ -189,6 +203,20 @@ public final class Registrations2Epics {
                     // Nothing to do
                 }
             };
+        }
+
+        private void populateHeaders(Record<String, String> record) {
+            String host = "unknown";
+
+            try {
+                host = InetAddress.getLocalHost().getHostName();
+            } catch (UnknownHostException e) {
+                LOGGER.debug("Unable to obtain host name");
+            }
+
+            record.headers().add("user", System.getProperty("user.name").getBytes(StandardCharsets.UTF_8));
+            record.headers().add("producer", "registrations2epics".getBytes(StandardCharsets.UTF_8));
+            record.headers().add("host", host.getBytes(StandardCharsets.UTF_8));
         }
     }
 }
