@@ -4,4 +4,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'registrations2epics'
+rootProject.name = 'jaws-registrations2epics'
