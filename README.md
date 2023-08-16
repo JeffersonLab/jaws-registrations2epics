@@ -1,4 +1,4 @@
-# registrations2epics [![CI](https://github.com/JeffersonLab/jaws-registrations2epics/actions/workflows/ci.yml/badge.svg)](https://github.com/JeffersonLab/jaws-registrations2epics/actions/workflows/ci.yml) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/jeffersonlab/jaws-registrations2epics?sort=semver&label=DockerHub)   ](https://hub.docker.com/r/jeffersonlab/jaws-registrations2epics)
+# jaws-registrations2epics [![CI](https://github.com/JeffersonLab/jaws-registrations2epics/actions/workflows/ci.yml/badge.svg)](https://github.com/JeffersonLab/jaws-registrations2epics/actions/workflows/ci.yml) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/jeffersonlab/jaws-registrations2epics?sort=semver&label=DockerHub)   ](https://hub.docker.com/r/jeffersonlab/jaws-registrations2epics)
 A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application to continuously populate the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) _epics-channels_ topic from the [JAWS](https://github.com/JeffersonLab/jaws) _alarm-instances_ topic for the subset of messages containing source type __EPICSSource__.  
 
 ---
