@@ -20,7 +20,7 @@ RUN cd /app && gradle build -x test --no-watch-fs $OPTIONAL_CERT_ARG
 FROM ${RUN_IMAGE} as runner
 ARG CUSTOM_CRT_URL
 ARG RUN_USER=guest
-ARG APP_HOME=/opt/registrations2epics
+ARG APP_HOME=/opt/jaws-registrations2epics
 USER root
 COPY --from=builder /app/docker-entrypoint.sh /docker-entrypoint.sh
 COPY --from=builder /app/build/install /opt
