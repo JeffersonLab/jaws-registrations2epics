@@ -24,3 +24,4 @@ services:
     environment:
       - BOOTSTRAP_SERVERS=kafka:9092
       - SCHEMA_REGISTRY=http://registry:8081
+      - CREATE_SOURCE_TOPIC=true
