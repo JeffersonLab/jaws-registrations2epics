@@ -1,14 +1,14 @@
-# registrations2epics [![CI](https://github.com/JeffersonLab/registrations2epics/actions/workflows/ci.yml/badge.svg)](https://github.com/JeffersonLab/registrations2epics/actions/workflows/ci.yml) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/jeffersonlab/registrations2epics?sort=semver&label=DockerHub)   ](https://hub.docker.com/r/jeffersonlab/registrations2epics)
+# registrations2epics [![CI](https://github.com/JeffersonLab/jaws-registrations2epics/actions/workflows/ci.yml/badge.svg)](https://github.com/JeffersonLab/jaws-registrations2epics/actions/workflows/ci.yml) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/jeffersonlab/jaws-registrations2epics?sort=semver&label=DockerHub)   ](https://hub.docker.com/r/jeffersonlab/jaws-registrations2epics)
 A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application to continuously populate the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) _epics-channels_ topic from the [JAWS](https://github.com/JeffersonLab/jaws) _alarm-instances_ topic for the subset of messages containing source type __EPICSSource__.  
 
 ---
- - [Overview](https://github.com/JeffersonLab/registrations2epics#overview)
- - [Quick Start with Compose](https://github.com/JeffersonLab/registrations2epics#quick-start-with-compose)
- - [Install](https://github.com/JeffersonLab/registrations2epics#install)
- - [Configure](https://github.com/JeffersonLab/registrations2epics#configure)
- - [Build](https://github.com/JeffersonLab/registrations2epics#build) 
- - [Release](https://github.com/JeffersonLab/registrations2epics#release)  
- - [See Also](https://github.com/JeffersonLab/registrations2epics#see-also)
+ - [Overview](https://github.com/JeffersonLab/jaws-registrations2epics#overview)
+ - [Quick Start with Compose](https://github.com/JeffersonLab/jaws-registrations2epics#quick-start-with-compose)
+ - [Install](https://github.com/JeffersonLab/jaws-registrations2epics#install)
+ - [Configure](https://github.com/JeffersonLab/jaws-registrations2epics#configure)
+ - [Build](https://github.com/JeffersonLab/jaws-registrations2epics#build) 
+ - [Release](https://github.com/JeffersonLab/jaws-registrations2epics#release)  
+ - [See Also](https://github.com/JeffersonLab/jaws-registrations2epics#see-also)
  ---
 
 ## Overview
@@ -19,8 +19,8 @@ When a JAWS registration is removed it is removed via a tombstone message, which
 ## Quick Start with Compose 
 1. Grab project
 ```
-git clone https://github.com/JeffersonLab/registrations2epics
-cd registrations2epics
+git clone https://github.com/JeffersonLab/jaws-registrations2epics
+cd jaws-registrations2epics
 ```
 2. Launch [Compose](https://github.com/docker/compose)
 ```
@@ -40,7 +40,7 @@ docker exec -it jaws set_instance alarm1 --pv channel1
 ## Install
 This application requires a Java 11+ JVM and standard library to run.
 
-Download from [Releases](https://github.com/JeffersonLab/registrations2epics/releases) or [build](https://github.com/JeffersonLab/registrations2epics#build) yourself.
+Download from [Releases](https://github.com/JeffersonLab/jaws-registrations2epics/releases) or [build](https://github.com/JeffersonLab/jaws-registrations2epics#build) yourself.
 
 Start scripts are created and dependencies collected by the Gradle distribution target:
 ```
@@ -51,11 +51,11 @@ Launch with:
 
 UNIX:
 ```
-bin/regisrations2epics
+bin/jaws-regisrations2epics
 ```
 Windows:
 ```
-bin/registrations2epics.bat
+bin/jaws-registrations2epics.bat
 ```
 
 ## Configure
@@ -82,9 +82,9 @@ gradlew build
 
 ## Release
 1. Bump the version number in build.gradle and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).
-1. Create a new release on the GitHub [Releases](https://github.com/JeffersonLab/jaws-epics2kafka/releases) page corresponding to same version in build.gradle (Enumerate changes and link issues). Run dist build and attach zip to release.
-1. [Publish to DockerHub](https://github.com/JeffersonLab/registrations2epics/actions/workflows/docker-publish.yml) GitHub Action should run automatically.
-1. Bump and commit quick start [image version](https://github.com/JeffersonLab/registrations2epics/blob/main/docker-compose.override.yml) after confirming new image works
+1. Create a new release on the GitHub [Releases](https://github.com/JeffersonLab/jaws-registrations2epics/releases) page corresponding to same version in build.gradle (Enumerate changes and link issues). Run dist build and attach zip to release.
+1. [Publish to DockerHub](https://github.com/JeffersonLab/jaws-registrations2epics/actions/workflows/docker-publish.yml) GitHub Action should run automatically.
+1. Bump and commit quick start [image version](https://github.com/JeffersonLab/jaws-registrations2epics/blob/main/docker-compose.override.yml) after confirming new image works
 
 ## See Also
-   - [Developer Notes](https://github.com/JeffersonLab/registrations2epics/wiki/Developer-Notes)
+   - [Developer Notes](https://github.com/JeffersonLab/jaws-registrations2epics/wiki/Developer-Notes)
