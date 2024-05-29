@@ -15,6 +15,8 @@ services:
       - KAFKA_CFG_LOG_CLEANER_MAX_COMPACTION_LAG_MS=600000
       - KAFKA_CFG_LOG_CLEANER_MIN_COMPACTION_LAG_MS=300000
       - KAFKA_CFG_LOG_ROLL_MS=300000
+      - KAFKA_CFG_LOG_MESSAGE_TIMESTAMP_TYPE=LogAppendTime
+
     healthcheck:
       test: kafka-topics.sh --bootstrap-server kafka:9092 --list
       start_period: 10s
