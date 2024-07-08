@@ -1,4 +1,4 @@
-# jaws-registrations2epics [![CI](https://github.com/JeffersonLab/jaws-registrations2epics/actions/workflows/ci.yml/badge.svg)](https://github.com/JeffersonLab/jaws-registrations2epics/actions/workflows/ci.yml) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/jeffersonlab/jaws-registrations2epics?sort=semver&label=DockerHub)   ](https://hub.docker.com/r/jeffersonlab/jaws-registrations2epics)
+# jaws-registrations2epics [![CI](https://github.com/JeffersonLab/jaws-registrations2epics/actions/workflows/ci.yaml/badge.svg)](https://github.com/JeffersonLab/jaws-registrations2epics/actions/workflows/ci.yaml) [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/jeffersonlab/jaws-registrations2epics?sort=semver&label=DockerHub)   ](https://hub.docker.com/r/jeffersonlab/jaws-registrations2epics)
 A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application to continuously populate the [epics2kafka](https://github.com/JeffersonLab/epics2kafka) _epics-channels_ topic from the [JAWS](https://github.com/JeffersonLab/jaws) _alarm-instances_ topic for the subset of messages containing source type __EPICSSource__.  
 
 ---
@@ -81,10 +81,11 @@ gradlew build
 **See**: [Docker Development Quick Reference](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c#development-quick-reference)
 
 ## Release
-1. Bump the version number in build.gradle and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).
-1. Create a new release on the GitHub [Releases](https://github.com/JeffersonLab/jaws-registrations2epics/releases) page corresponding to same version in build.gradle (Enumerate changes and link issues). Run dist build and attach zip to release.
-1. [Publish to DockerHub](https://github.com/JeffersonLab/jaws-registrations2epics/actions/workflows/docker-publish.yml) GitHub Action should run automatically.
-1. Bump and commit quick start [image version](https://github.com/JeffersonLab/jaws-registrations2epics/blob/main/docker-compose.override.yml) after confirming new image works
+1. Bump the version number in the VERSION file and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).
+2. The [CD](https://github.com/JeffersonLab/jaws-registrations2epics/blob/main/.github/workflows/cd.yaml) GitHub Action should run automatically invoking:
+    - The [Create release](https://github.com/JeffersonLab/java-workflows/blob/main/.github/workflows/gh-release.yaml) GitHub Action to tag the source and create release notes summarizing any pull requests.   Edit the release notes to add any missing details.  A zip file artifact is attached to the release.
+    - The [Publish docker image](https://github.com/JeffersonLab/container-workflows/blob/main/.github/workflows/docker-publish.yaml) GitHub Action to create a new demo Docker image.
+
 
 ## See Also
    - [Developer Notes](https://github.com/JeffersonLab/jaws-registrations2epics/wiki/Developer-Notes)
