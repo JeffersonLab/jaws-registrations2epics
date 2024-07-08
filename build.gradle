@@ -7,9 +7,10 @@ plugins {
 }
 
 group 'org.jlab'
-version '4.5.0'
+version new File("${projectDir}/VERSION").text.trim()
+ext.releaseDate = new Date().format('MMM dd yyyy')
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.release = 11
     options.encoding = 'UTF-8'
     options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
