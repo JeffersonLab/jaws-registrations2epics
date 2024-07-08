@@ -1,22 +1,23 @@
 services:
   kafka:
     extends:
-      file: build.yml
+      file: compose.yaml
       service: kafka
 
   registry:
     extends:
-      file: build.yml
+      file: compose.yaml
       service: registry
 
   jaws:
     extends:
-      file: build.yml
+      file: compose.yaml
       service: jaws
 
   registrations2epics:
     extends:
-      file: build.yml
+      file: compose.yaml
       service: registrations2epics
-    volumes:
-      - ./build/install/registrations2epics:/opt/registrations2epics
+    build:
+      context: .
+      dockerfile: Dockerfile
