@@ -3,6 +3,7 @@ plugins {
     id 'application'
     id 'distribution'
     id 'com.github.jk1.dependency-license-report' version '2.0'
+    id "com.diffplug.spotless" version "6.25.0"
 }
 
 group 'org.jlab'
@@ -81,5 +82,11 @@ startScripts {
         def unixScriptFile = file getUnixScript()
         windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\config', '%APP_HOME%\\config')
         unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/config', '$APP_HOME/config')
+    }
+}
+
+spotless {
+    java {
+        googleJavaFormat()
     }
 }
