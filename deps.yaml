@@ -38,7 +38,7 @@ services:
       - SCHEMA_REGISTRY_KAFKA_BROKERS=PLAINTEXT://kafka:9092
 
   jaws:
-    image: jeffersonlab/jaws-libp:4.6.3
+    image: jeffersonlab/jaws-libp:4.9.2
     hostname: jaws
     container_name: jaws
     depends_on:
