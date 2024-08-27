@@ -38,7 +38,7 @@ services:
       - SCHEMA_REGISTRY_KAFKA_BROKERS=PLAINTEXT://kafka:9092
 
   cli:
-    image: jeffersonlab/jaws-libp:4.9.2
+    image: jeffersonlab/jaws-libp:5.0.0
     hostname: cli
     container_name: cli
     depends_on:
