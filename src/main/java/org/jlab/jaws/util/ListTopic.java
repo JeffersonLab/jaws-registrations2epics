@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.common.KafkaFuture;
+import org.jlab.jaws.clients.AlarmProducer;
 
 public class ListTopic {
   public static void main(String[] args) throws ExecutionException, InterruptedException {
@@ -28,8 +29,8 @@ public class ListTopic {
     System.out.println(nameSet);
 
     for (String name : nameSet) {
-      if ("alarm-instances".equals(name)) {
-        System.out.println("Topic 'alarm-instances' exists!");
+      if (AlarmProducer.TOPIC.equals(name)) {
+        System.out.println("Topic '" + AlarmProducer.TOPIC + "' exists!");
         System.exit(0);
       }
     }
