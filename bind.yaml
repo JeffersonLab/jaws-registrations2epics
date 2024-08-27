@@ -9,10 +9,10 @@ services:
       file: build.yaml
       service: registry
 
-  jaws:
+  cli:
     extends:
       file: build.yaml
-      service: jaws
+      service: cli
 
   registrations2epics:
     extends:

@@ -32,7 +32,7 @@ docker exec kafka kafka-console-consumer.sh --bootstrap-server kafka:9092 --topi
 ```
 4. Register an alarm
 ```
-docker exec -it jaws set_instance alarm1 --pv channel1 
+docker exec -it cli set_instance alarm1 --pv channel1 
 ```
 
 **See**: [Docker Compose Strategy](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c)

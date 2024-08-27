@@ -9,10 +9,10 @@ services:
       file: deps.yaml
       service: registry
 
-  jaws:
+  cli:
     extends:
       file: deps.yaml
-      service: jaws
+      service: cli
 
   registrations2epics:
     hostname: registrations2epics
