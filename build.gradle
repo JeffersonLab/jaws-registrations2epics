@@ -59,6 +59,9 @@ distZip.dependsOn(generateLicenseReport)
 
 run {
     classpath += files('config')
+    environment "BOOTSTRAP_SERVERS", "localhost:9094"
+    environment "SCHEMA_REGISTRY", "http://localhost:8081"
+    environment "STATE_DIR", project.file('build/kafka-streams')
 }
 
 distributions {

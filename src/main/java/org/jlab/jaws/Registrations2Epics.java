@@ -20,6 +20,7 @@ import org.apache.kafka.streams.processor.api.Record;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.StoreBuilder;
 import org.apache.kafka.streams.state.Stores;
+import org.jlab.jaws.clients.AlarmProducer;
 import org.jlab.jaws.entity.Alarm;
 import org.jlab.jaws.entity.EPICSSource;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public final class Registrations2Epics {
   private static final Logger LOGGER = LoggerFactory.getLogger(Registrations2Epics.class);
 
   // TODO: these need to be configurable
-  public static final String INPUT_TOPIC = "alarm-instances";
+  public static final String INPUT_TOPIC = AlarmProducer.TOPIC;
   public static final String OUTPUT_TOPIC = "epics-channels";
 
   public static final Serde<String> INPUT_KEY_SERDE = Serdes.String();
