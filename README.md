@@ -7,6 +7,7 @@ A [Kafka Streams](https://kafka.apache.org/documentation/streams/) application t
  - [Install](https://github.com/JeffersonLab/jaws-registrations2epics#install)
  - [Configure](https://github.com/JeffersonLab/jaws-registrations2epics#configure)
  - [Build](https://github.com/JeffersonLab/jaws-registrations2epics#build) 
+ - [Develop](https://github.com/JeffersonLab/jaws-registration2epics#develop)
  - [Release](https://github.com/JeffersonLab/jaws-registrations2epics#release)  
  - [See Also](https://github.com/JeffersonLab/jaws-registrations2epics#see-also)
  ---
@@ -79,6 +80,23 @@ gradlew build
 **Note for JLab On-Site Users**: Jefferson Lab has an intercepting [proxy](https://gist.github.com/slominskir/92c25a033db93a90184a5994e71d0b78)
 
 **See**: [Docker Development Quick Reference](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c#development-quick-reference)
+
+## Develop
+In order to iterate rapidly when making changes it's often useful to run the app directly on the local workstation, perhaps leveraging an IDE. In this scenario run the service dependencies with:
+```
+docker compose -f deps.yaml up
+```
+Then run the app with:
+```
+gradlew run
+```
+
+**Note**: The `STATE_DIR` config is set to the gradle `build` dir such that running a `clean` task will clear the local state.  You may need to reset the Kafka server state after running a clean task by restarting Kafka from scratch else using the [Reset Tool](https://kafka.apache.org//documentation/streams/developer-guide/app-reset-tool).
+
+**Note**: Javadocs can be generated with the command:
+```
+gradlew javadoc
+```
 
 ## Release
 1. Bump the version number in the VERSION file and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).
