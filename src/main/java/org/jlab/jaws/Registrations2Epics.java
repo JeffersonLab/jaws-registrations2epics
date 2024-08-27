@@ -20,7 +20,7 @@ import org.apache.kafka.streams.processor.api.Record;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.StoreBuilder;
 import org.apache.kafka.streams.state.Stores;
-import org.jlab.jaws.entity.AlarmInstance;
+import org.jlab.jaws.entity.Alarm;
 import org.jlab.jaws.entity.EPICSSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +38,7 @@ public final class Registrations2Epics {
   public static final String OUTPUT_TOPIC = "epics-channels";
 
   public static final Serde<String> INPUT_KEY_SERDE = Serdes.String();
-  public static final SpecificAvroSerde<AlarmInstance> INPUT_VALUE_SERDE =
-      new SpecificAvroSerde<>();
+  public static final SpecificAvroSerde<Alarm> INPUT_VALUE_SERDE = new SpecificAvroSerde<>();
   public static final Serde<String> OUTPUT_KEY_SERDE = INPUT_KEY_SERDE;
   public static final Serde<String> OUTPUT_VALUE_SERDE = INPUT_KEY_SERDE;
 
@@ -80,7 +79,7 @@ public final class Registrations2Epics {
     config.put(SCHEMA_REGISTRY_URL_CONFIG, props.getProperty(SCHEMA_REGISTRY_URL_CONFIG));
     INPUT_VALUE_SERDE.configure(config, false);
 
-    final StoreBuilder<KeyValueStore<String, AlarmInstance>> storeBuilder =
+    final StoreBuilder<KeyValueStore<String, Alarm>> storeBuilder =
         Stores.keyValueStoreBuilder(
                 Stores.persistentKeyValueStore("Registrations2EpicsStore"),
                 INPUT_KEY_SERDE,
@@ -89,7 +88,7 @@ public final class Registrations2Epics {
 
     builder.addStateStore(storeBuilder);
 
-    final KStream<String, AlarmInstance> input =
+    final KStream<String, Alarm> input =
         builder.stream(INPUT_TOPIC, Consumed.with(INPUT_KEY_SERDE, INPUT_VALUE_SERDE));
 
     final KStream<String, String> output =
@@ -104,7 +103,7 @@ public final class Registrations2Epics {
     return "{\"topic\":\"alarm-activations\",\"channel\":\"" + channel + "\"}";
   }
 
-  private static String toJsonValue(String outkey, AlarmInstance registration) {
+  private static String toJsonValue(String outkey, Alarm registration) {
     return registration == null ? null : "{\"mask\":\"a\",\"outkey\":\"" + outkey + "\"}";
   }
 
@@ -144,7 +143,7 @@ public final class Registrations2Epics {
    * previous AlarmInstances.
    */
   private static final class MyProcessorSupplier
-      implements ProcessorSupplier<String, AlarmInstance, String, String> {
+      implements ProcessorSupplier<String, Alarm, String, String> {
 
     private final String storeName;
 
@@ -163,10 +162,10 @@ public final class Registrations2Epics {
      * @return a new {@link Transformer} instance
      */
     @Override
-    public Processor<String, AlarmInstance, String, String> get() {
-      return new Processor<String, AlarmInstance, String, String>() {
+    public Processor<String, Alarm, String, String> get() {
+      return new Processor<String, Alarm, String, String>() {
         private ProcessorContext<String, String> context;
-        private KeyValueStore<String, AlarmInstance> store;
+        private KeyValueStore<String, Alarm> store;
 
         @Override
         public void init(ProcessorContext<String, String> context) {
@@ -175,7 +174,7 @@ public final class Registrations2Epics {
         }
 
         @Override
-        public void process(Record<String, AlarmInstance> input) {
+        public void process(Record<String, Alarm> input) {
           Record<String, String> output =
               null; // null returned to mean no record - when not of type DirectCAAlarm OR when an
           // unmatched tombstone is encountered
@@ -186,7 +185,7 @@ public final class Registrations2Epics {
 
           if (input.value()
               == null) { // Tombstone - we need most recent non-null registration to transform
-            AlarmInstance previous = store.get(input.key());
+            Alarm previous = store.get(input.key());
             if (previous != null) { // We only store EPICSProducer, so no need to check type
               channel = ((EPICSSource) previous.getSource()).getPv();
               output =

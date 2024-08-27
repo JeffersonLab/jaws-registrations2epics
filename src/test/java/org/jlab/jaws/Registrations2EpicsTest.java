@@ -13,9 +13,9 @@ import org.junit.Test;
 
 public class Registrations2EpicsTest {
   private TopologyTestDriver testDriver;
-  private TestInputTopic<String, AlarmInstance> inputTopic;
+  private TestInputTopic<String, Alarm> inputTopic;
   private TestOutputTopic<String, String> outputTopic;
-  private AlarmInstance instance = new AlarmInstance();
+  private Alarm instance = new Alarm();
 
   @Before
   public void setup() {
@@ -40,7 +40,7 @@ public class Registrations2EpicsTest {
     source.setPv("channel1");
 
     instance.setSource(source);
-    instance.setAlarmclass("base");
+    instance.setAction("base");
     instance.setLocation(Arrays.asList("INJ"));
     instance.setScreencommand("/");
   }
