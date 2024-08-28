@@ -8,6 +8,7 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -20,8 +21,10 @@ import org.apache.kafka.streams.processor.api.Record;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.StoreBuilder;
 import org.apache.kafka.streams.state.Stores;
+import org.jlab.jaws.clients.AlarmProducer;
 import org.jlab.jaws.entity.Alarm;
 import org.jlab.jaws.entity.EPICSSource;
+import org.jlab.jaws.util.CreateTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +37,7 @@ public final class Registrations2Epics {
   private static final Logger LOGGER = LoggerFactory.getLogger(Registrations2Epics.class);
 
   // TODO: these need to be configurable
-  public static final String INPUT_TOPIC = "alarm-instances";
+  public static final String INPUT_TOPIC = AlarmProducer.TOPIC;
   public static final String OUTPUT_TOPIC = "epics-channels";
 
   public static final Serde<String> INPUT_KEY_SERDE = Serdes.String();
@@ -117,6 +120,19 @@ public final class Registrations2Epics {
     final Topology top = createTopology(props);
     final KafkaStreams streams = new KafkaStreams(top, props);
     final CountDownLatch latch = new CountDownLatch(1);
+
+    if (System.getenv("CREATE_SOURCE_TOPIC") != null) {
+      LOGGER.info("CREATE_SOURCE_TOPIC env set, attempting to create epics-channels topic");
+      try {
+        CreateTopic.createEpics2KafkaSourceTopic();
+      } catch (ExecutionException e) {
+        e.printStackTrace();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    } else {
+      LOGGER.info("NOT attempting to create epics-channels topic");
+    }
 
     // attach shutdown handler to catch control-c
     Runtime.getRuntime()

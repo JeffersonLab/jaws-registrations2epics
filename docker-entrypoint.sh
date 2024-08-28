@@ -9,7 +9,7 @@ while [ $(curl -s -o /dev/null -w %{http_code} $SCHEMA_REGISTRY/schemas/types) -
 done
 
 
-# We must wait for jaws container to create "alarm-instances" topic else streams app will fail.
+# We must wait for jaws container to create "alarms" topic else streams app will fail.
 # Optionally create output topic 'epics-channels'.  Missing output isn't fatal.
 
 APP_HOME=/opt/jaws-registrations2epics

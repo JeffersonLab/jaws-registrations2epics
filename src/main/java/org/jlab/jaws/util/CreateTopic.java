@@ -12,7 +12,11 @@ import org.apache.kafka.common.config.TopicConfig;
 
 public class CreateTopic {
   public static void main(String[] args) throws ExecutionException, InterruptedException {
+    createEpics2KafkaSourceTopic();
+  }
 
+  public static void createEpics2KafkaSourceTopic()
+      throws ExecutionException, InterruptedException {
     String bootstrapServers = System.getenv("BOOTSTRAP_SERVERS");
 
     if (bootstrapServers == null) {

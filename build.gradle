@@ -62,6 +62,7 @@ run {
     environment "BOOTSTRAP_SERVERS", "localhost:9094"
     environment "SCHEMA_REGISTRY", "http://localhost:8081"
     environment "STATE_DIR", project.file('build/kafka-streams')
+    environment "CREATE_SOURCE_TOPIC", "yes"
 }
 
 distributions {
